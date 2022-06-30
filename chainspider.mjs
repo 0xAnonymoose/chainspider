@@ -1,12 +1,18 @@
 class RelationSet {
-  constructor() {
+  constructor(node) {
+    this.node = node;
     this.relations = {};
   }
   
-  addRelation(r,t) {
-    if (!this.relations.hasOwnProperty(r)) { this.relations[r] = {}; }
-    if (this.relations[r].indexOf(t) == -1) {
-      this.relations[r].push(t);
+  hasRelation(target,relation) {
+    if (!this.relations.hasOwnProperty(relation)) { this.relations[relation] = []; }
+    return (this.relations[relation].indexOf(target) > -1);
+  }
+  
+  addRelation(target, relation) {
+    if (!this.hasRelation(target,relation)) {
+      this.relations[relation].push(target);
+      console.log('<NewRelation>', this.node.toString(), relation.toString(), target.toString() );
     }
   }
 }
@@ -15,8 +21,16 @@ class Node {
   constructor(type, val) {   
     this.type = type;
     this.val = val;
-    this.relations = new RelationSet();
+    this.relations = new RelationSet(this);
+    
+    console.log('<CreatedNode>', this.toString());
   } 
+  
+  toString() { 
+    let v = typeof this.val == 'string' ? this.val : JSON.stringify(this.val);
+    if (v.length > 64) { v = v.substring(0,64) + '...'; }
+    return `${this.type}[${v}]`;
+  }
 }
 
 export class Inspector {
@@ -30,12 +44,9 @@ export class Inspector {
     this.cs.createSubscription(this, t, r);
   }
   
-  onRelation(r) {
+  async onRelation(r) {
   }
-  
-  onCreate(n) {
-  }
-  
+ 
 }
 
 class Relation {
@@ -44,8 +55,15 @@ class Relation {
     this.relation = relation;
     this.dst_node = dst_node;
     
-    this.src_node.relations.addRelation(dst_node, relation);
+    if (relation.substring(0,1) != '@') {
+      this.src_node.relations.addRelation(dst_node, relation);
+    }
   }
+  
+  toString() {
+    return `${this.src_node.toString()} :${this.relation} ${this.dst_node && this.dst_node.toString()}`;
+  }
+  
 }
 
 class Subscription {
@@ -65,10 +83,10 @@ export class ChainSpider {
   }
 
   createNode(type, val) {
-    let node = new Node(this, type, val);
+    let node = new Node(type, val);
     this.nodes.push(node);
 
-    // fire @on-create
+    // fire @on-create virtual relation
     for (let s of this.subscriptions) {
       if (s.type == type && s.relation == '@on-create') {
          s.inspector.onRelation(new Relation(node, '@on-create', null));

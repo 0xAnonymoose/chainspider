@@ -1,30 +1,10 @@
-import { Node, ChainSpider } from './chainspider.mjs';
-
-class ContractFinder extends Inspector {
-  constructor(cs) { 
-    super(cs, 'ContractFinder');
-    this.subscribe('BlockchainAddress', '@on-create');
-  }
-  
-  onRelation(r) {  console.log(this.id, 'base onRelation', r);  }
-  
-}
-
-
-class TokenFinder extends Inspector {
-  constructor(cs) { 
-    super(cs, 'ContractFinder');
-    this.subscribe('BlockchainAddress', 'is-contract');
-  }
-  
-  onRelation(r) {  console.log(this.id, 'base onRelation', r);  }
-  
-}
+import { ChainSpider } from './chainspider.mjs';
+import { ContractFinder, TokenFinder } from './modules.mjs';
 
 let cs = new ChainSpider();
 
 new ContractFinder(cs);
 new TokenFinder(cs);
 
-cs.createNode('BlockchainAddress', 'test');
+cs.createNode('BlockchainAddress', '0xa34f2dbab310ab8adba3682dc8978d29ed8a9c7e');
 
