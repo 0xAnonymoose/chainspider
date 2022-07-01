@@ -16,10 +16,10 @@ class RelationSet {
     }
   }
   
-  getRelation(relation) {
+  getRelation(relation, idx = 0) {
    let r = this.relations[relation];
    if (!r) { return null; }
-   return r[0];
+   return idx != null ? r[idx] : r;
   }  
 }
 
@@ -92,7 +92,7 @@ export class Relation {
   }
   
   toString() {
-    return `${this.src_node.toString()} :${this.relation} ${this.dst_node && this.dst_node.toString()}`;
+    return `${this.src_node.toString()} :${this.relation} ${this.dst_node !== true ? this.dst_node.toString() : ""}`;
   }
   
 }
@@ -125,13 +125,9 @@ export class ChainSpider {
     let node = new Node(type, val);
     this.nodes.push(node);
 
-    // fire @on-create virtual relation
-    for (let s of this.subscriptions) {
-      if (s.type == type && s.relation == '@on-create') {
-         s.inspector.onRelation(new Relation(node, '@on-create', null));
-      }
-    }
-    
+    // fire virtual @on-create event
+    this.createEvent( node, '@on-create' );
+   
     return node;
   }
   
@@ -148,7 +144,7 @@ export class ChainSpider {
     
     // link relation to src and dst nodes
     src_node.relations.addRelation(dst_node, relation);
-    if (dst_node !== true) {
+    if (dst_node && dst_node !== true) {
       dst_node.relations.addRelation(src_node, relation);
     }
     

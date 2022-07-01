@@ -58,6 +58,7 @@ export class WhitelistChecker extends Inspector {
     
     if (!match) {
       r.dst_node.reportMessage( this.id, 0, 'Token '+name+' was not found in CMC whitelist.' );
+      this.cs.createEvent( r.dst_node, '@not-whitelisted' );
     }
     
   }
@@ -128,6 +129,44 @@ export class TokenFinder extends Inspector {
     this.cs.createRelation(r.dst_node, 'is-token', t);    
   }
   
+}
+
+export class TopHoldersChecker extends Inspector {
+  constructor(cs) { 
+    super(cs, 'TopHoldersChecker');
+        
+    this.subscribe('TokenBEP20', '@holders-expanded');
+  }
+
+  async onRelation(r) {
+    let addr = r.src_node.relative('is-token').relative('is-contract').val;
+    
+    let holders = r.src_node.relations.getRelation('holder', null).map( (x)=>{ return x.val } );
+    
+    console.log(this.id, 'Starting analysis of '+addr+' with '+holders.length+' holders');
+    const token_abi = await new web3.eth.Contract( bep20, addr );
+    
+    const { totalSupply, decimals } = r.src_node.val;
+    
+    let ts = BigInt(totalSupply) / BigInt(10**decimals);
+    
+    let balances = {};
+    for (let holder of holders) {
+      balances[holder] = await token_abi.methods.balanceOf(holder).call();
+      console.log(this.id, holder, balances[holder]);
+      
+      let b = BigInt(balances[holder]) / BigInt(10**decimals);
+      let bnr = BigInt(1000) * BigInt(balances[holder]) / BigInt(totalSupply);
+      let ratio = parseFloat(bnr.toString())/10.0;
+      
+      if (ratio > 100.0) {
+        r.src_node.reportMessage(this.id, -100, 'Token holder '+holder+' has '+ratio.toFixed(0)+'% of supply.');
+      } else if (ratio > 33.0) {
+        r.src_node.reportMessage(this.id, -25, 'Token holder '+holder+' has over 33% of supply.');
+      }
+      
+    }
+  }
 }
 
 export class TopHoldersFinder extends Inspector {
