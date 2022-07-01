@@ -82,11 +82,13 @@ export class Inspector {
  
 }
 
-class Relation {
+export class Relation {
   constructor(src_node, relation, dst_node) {
     this.src_node = src_node;
     this.relation = relation;
     this.dst_node = dst_node;
+    
+    console.log((relation.substring(0,1) == '@') ? '<Event>' : '<NewRelation>', this.toString());    
   }
   
   toString() {
@@ -146,7 +148,9 @@ export class ChainSpider {
     
     // link relation to src and dst nodes
     src_node.relations.addRelation(dst_node, relation);
-    dst_node.relations.addRelation(src_node, relation);
+    if (dst_node !== true) {
+      dst_node.relations.addRelation(src_node, relation);
+    }
     
     // fire subscriptions
     for (let s of this.subscriptions) {
@@ -155,8 +159,11 @@ export class ChainSpider {
       }
     }
 
-    console.log('<NewRelation>', r.toString());
     return r;
+  }
+  
+  createEvent(src_node, event) {
+    return this.createRelation(src_node, event, true);
   }
   
   createSubscription(inspector, type, relation) {

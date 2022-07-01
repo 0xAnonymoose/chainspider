@@ -1,4 +1,4 @@
-import { Inspector } from './chainspider.mjs';
+import { Inspector, Relation } from './chainspider.mjs';
 import web3 from './blockchain.mjs';
 import { bep20, pancakeLP } from './lib/abi.mjs';
 import fetch from 'node-fetch';
@@ -96,9 +96,17 @@ export class TokenFinder extends Inspector {
 
       let t = this.cs.createNode('TokenAMM', { asset: asset.toLowerCase(), base: base.toLowerCase() });
       this.cs.createRelation(r.dst_node, 'is-amm', t);
-      this.cs.createNode('BlockchainAddress', asset.toLowerCase());
-      this.cs.createNode('BlockchainAddress', base.toLowerCase());
-
+      
+      let a = this.cs.createNode('BlockchainAddress', asset.toLowerCase());     
+      if (a.relative('is-contract') && a.relative('is-contract').relative('is-token')) {
+        this.cs.createRelation( a.relative('is-contract').relative('is-token'), 'trades-on', t );
+      }
+      
+      let b = this.cs.createNode('BlockchainAddress', base.toLowerCase());      
+      if (b.relative('is-contract') && b.relative('is-contract').relative('is-token')) {
+        this.cs.createRelation( b.relative('is-contract').relative('is-token'), 'bases', t );
+      }
+      
       return;
     }
     
@@ -129,7 +137,6 @@ export class TopHoldersFinder extends Inspector {
     this.top = 25;
     
     this.auto_expand = true;
-    
     this.auto_expand_exclude = [ 
       '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c',  // WBNB
       '0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82',  // CAKE
@@ -180,6 +187,8 @@ export class TopHoldersFinder extends Inspector {
       }
 
     });
+    
+    this.cs.createEvent( r.dst_node, '@holders-expanded' );
     
   }
   
