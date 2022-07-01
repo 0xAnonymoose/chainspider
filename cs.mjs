@@ -6,7 +6,7 @@ const cs = new ChainSpider();
 new ContractFinder(cs);
 new TokenFinder(cs);
 new WhitelistChecker(cs);
-new TopHoldersFinder(cs);
+//new TopHoldersFinder(cs);
 new TopHoldersChecker(cs);
 
 export default cs;
