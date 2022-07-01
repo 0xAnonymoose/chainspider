@@ -116,7 +116,7 @@ export class ChainSpider {
     for (let n of this.nodes) {
       if (n.type == type && JSON.stringify(val) == JSON.stringify(n.val)) { 
         console.log('<DupeNode>', 'not creating', type, val);
-        return;
+        return n;
       }
     }
     
@@ -137,7 +137,7 @@ export class ChainSpider {
     for (let r of this.relations) {
       if (r.src_node == src_node && r.relation == relation && r.dst_node == dst_node) { 
         console.log('<DupeRelation>', 'not creating', src_node.toString(), relation, dst_node.toString());
-        return;
+        return r;
       }
     }
       
