@@ -3,7 +3,7 @@ import web3 from './blockchain.mjs';
 import { bep20, pancakeLP } from './lib/abi.mjs';
 //import fetch from 'node-fetch';
 import fetch from 'cross-fetch';
-import * as cheerio from 'cheerio';
+//import * as cheerio from 'cheerio';
 
 export class ContractFinder extends Inspector {
   constructor(cs) { 
