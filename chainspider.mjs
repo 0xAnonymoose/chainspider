@@ -37,11 +37,10 @@ class Node {
     this.type = type;
     this.val = val;
     this.relations = new RelationSet(this);
+    this.onMessage = null;
     
     this.totalScore = 0;
     this.messages = [];
-    
-    console.log('<CreatedNode>', this.toString());
   } 
   
   toString() { 
@@ -60,9 +59,8 @@ class Node {
     
     this.totalScore = 0;
     for (let i=0; i < this.messages.length; i++) { this.totalScore += this.messages[i].score; }
-
-    console.log('<Message:'+src+'>', score, msg);
-    console.log('<Score>', this.toString(), this.totalScore);
+    
+    if (this.onMessage != null) { this.onMessage(m); }
   }
 }
 
@@ -87,8 +85,6 @@ export class Relation {
     this.src_node = src_node;
     this.relation = relation;
     this.dst_node = dst_node;
-    
-    console.log((relation.substring(0,1) == '@') ? '<Event>' : '<NewRelation>', this.toString());    
   }
   
   toString() {
@@ -123,10 +119,14 @@ export class ChainSpider {
     }
     
     let node = new Node(type, val);
+    node.onMessage = this.onMessage;
     this.nodes.push(node);
 
     // fire virtual @on-create event
     this.createEvent( node, '@on-create' );
+    
+    // notify UX
+    this.onNode(node);
    
     return node;
   }
@@ -154,6 +154,9 @@ export class ChainSpider {
          s.inspector.onRelation(r);
       }
     }
+    
+    // notify UX
+    this.onRelation(r);
 
     return r;
   }
@@ -166,6 +169,19 @@ export class ChainSpider {
     let s = new Subscription(inspector, type, relation);
     this.subscriptions.push(s);
     return s;
+  }
+  
+  onNode(node) {
+    console.log('<CreatedNode>', node.toString());
+  }
+  
+  onRelation(relation) {
+    console.log((relation.relation.substring(0,1) == '@') ? '<Event>' : '<NewRelation>', relation.toString());   
+  }
+  
+  onMessage(msg) {
+    console.log('<Message:'+msg.src+'>', msg.score, msg.msg);
+    console.log('<Score>', msg.node.toString(), msg.node.totalScore);  
   }
    
 }

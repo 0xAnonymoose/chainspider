@@ -243,3 +243,11 @@ export class TopHoldersFinder extends Inspector {
   }
   
 }
+
+export function registerModules(cs) {
+  new ContractFinder(cs);
+  new TokenFinder(cs);
+  new WhitelistChecker(cs);
+  //new TopHoldersFinder(cs);
+  new TopHoldersChecker(cs);
+}
