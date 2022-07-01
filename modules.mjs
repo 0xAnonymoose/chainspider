@@ -1,7 +1,8 @@
 import { Inspector, Relation } from './chainspider.mjs';
 import web3 from './blockchain.mjs';
 import { bep20, pancakeLP } from './lib/abi.mjs';
-import fetch from 'node-fetch';
+//import fetch from 'node-fetch';
+import fetch from 'cross-fetch';
 import * as cheerio from 'cheerio';
 
 export class ContractFinder extends Inspector {
@@ -24,6 +25,10 @@ export class ContractFinder extends Inspector {
 
 }
 
+function proxyUrl(url) {
+  return 'https://corsproxy.io/?' + encodeURI(url);
+}
+
 export class WhitelistChecker extends Inspector {
   constructor(cs) { 
     super(cs, 'WhitelistChecker');
@@ -32,7 +37,7 @@ export class WhitelistChecker extends Inspector {
   
   async onRelation(r) {
     let addr = r.src_node.relative('is-contract').val;
-    let res = await fetch('https://github.com/pancakeswap/token-list/raw/main/src/tokens/cmc.json');
+    let res = await fetch(proxyUrl('https://github.com/pancakeswap/token-list/raw/main/src/tokens/cmc.json'));
     let tokens = await res.json();
     
     let { symbol, name } = r.dst_node.val;
@@ -184,14 +189,20 @@ export class TopHoldersFinder extends Inspector {
     
     this.subscribe('Contract', 'is-token');
   }
-  
+
+
   async onRelation(r) {
     let addr = r.src_node.relative('is-contract').val;
     if (this.auto_expand_exclude.indexOf(addr) > -1 || !this.auto_expand) { return; }
     
-    let url = 'https://bscscan.com/token/tokenholderchart/'+addr+'?range='+this.top;
-    
+    let url = 'https://bscscan.com/token/tokenholderchart/'+addr+'?range='+this.top; 
+
     let res = await fetch(url);
+    if (res.status != 200) {
+       r.dst_node.reportMessage(this.id, 0, 'Lookup failed with result code '+res.status);
+       return;
+    }
+
     let doc = cheerio.load(await res.text());
     
     doc('#ContentPlaceHolder1_resultrows table tbody tr').each( (idx, row) => {

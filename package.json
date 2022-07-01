@@ -10,7 +10,21 @@
   "license": "ISC",
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
+    "cross-fetch": "^3.1.5",
     "node-fetch": "^3.2.6",
+    "parcel": "^2.6.2",
     "web3": "^1.7.4"
+  },
+  "devDependencies": {
+    "assert": "^2.0.0",
+    "browserify-zlib": "^0.2.0",
+    "events": "^3.3.0",
+    "https-browserify": "^1.0.0",
+    "os-browserify": "^0.3.0",
+    "path-browserify": "^1.0.1",
+    "querystring-es3": "^0.2.1",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "url": "^0.11.0"
   }
 }

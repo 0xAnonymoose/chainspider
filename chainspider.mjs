@@ -18,7 +18,7 @@ class RelationSet {
   
   getRelation(relation, idx = 0) {
    let r = this.relations[relation];
-   if (!r) { return null; }
+   if (!r) { return idx == 0 ? null : []; }
    return idx != null ? r[idx] : r;
   }  
 }
