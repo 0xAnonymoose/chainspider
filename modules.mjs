@@ -60,7 +60,7 @@ export class WhitelistChecker extends Inspector {
     }
     
     if (!match) {
-      r.dst_node.reportMessage( this.id, 0, 'Token '+name+' was not found in CMC whitelist.' );
+      r.dst_node.reportMessage( this.id, -5, 'Token '+name+' was not found in CMC whitelist.' );
       this.cs.createEvent( r.dst_node, '@not-whitelisted' );
     }
     
@@ -134,6 +134,28 @@ export class TokenFinder extends Inspector {
   
 }
 
+export class PairTokenFinder extends Inspector {
+  constructor(cs) { 
+    super(cs, 'PairTokenFinder');
+    this.subscribe('Contract', 'is-token');
+  }
+  
+  async onRelation(r) {
+    let token_addr = r.src_node.relative('is-contract');
+    
+    let amms = this.cs.nodes.filter( (x)=> { return x.type == 'TokenAMM'; } );
+    for (let amm of amms) {
+      //console.log(this.id, token, amm);
+      if (amm.val.base == token_addr.val) {
+        this.cs.createRelation( r.dst_node, 'trades-on', amm );
+      }
+      if (amm.val.asset == token_addr.val) {
+        this.cs.createRelation( r.dst_node, 'bases', amm );
+      }
+    }
+  }
+}
+
 export class TopHoldersChecker extends Inspector {
   constructor(cs) { 
     super(cs, 'TopHoldersChecker');
@@ -176,6 +198,8 @@ export class TopHoldersChecker extends Inspector {
   }
 }
 
+const ANIMATE_DELAY = 2000;
+
 export class TopHoldersFinder extends Inspector {
   constructor(cs) { 
     super(cs, 'TokenFinder');
@@ -207,9 +231,11 @@ export class TopHoldersFinder extends Inspector {
     
     let data = await res.json();
     
-    for (let holder of data) {        
+    for (let holder of data) { 
         let n = this.cs.createNode('BlockchainAddress', holder.address);
         this.cs.createRelation(n, 'holder', r.dst_node);
+        
+        await new Promise(resolve => setTimeout(resolve, ANIMATE_DELAY));
     }
     
     this.cs.createEvent( r.dst_node, '@holders-expanded' );
@@ -224,4 +250,5 @@ export function registerModules(cs) {
   new WhitelistChecker(cs);
   new TopHoldersFinder(cs);
   new TopHoldersChecker(cs);
+  new PairTokenFinder(cs);
 }

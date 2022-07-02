@@ -113,6 +113,8 @@ class Subscription {
   }
 }
 
+const ANIMATE_DELAY = 500;
+
 export class ChainSpider {
 
   constructor() {
@@ -129,7 +131,7 @@ export class ChainSpider {
         return n;
       }
     }
-    
+
     let node = new Node(type, val);
     node.onMessage = this.onMessage;
     this.nodes.push(node);
@@ -143,7 +145,7 @@ export class ChainSpider {
     return node;
   }
   
-  createRelation(src_node, relation, dst_node) {
+  async createRelation(src_node, relation, dst_node) {
     for (let r of this.relations) {
       if (r.src_node == src_node && r.relation == relation && r.dst_node == dst_node) { 
         console.log('<DupeRelation>', 'not creating', src_node.toString(), relation, dst_node.toString());
@@ -163,6 +165,7 @@ export class ChainSpider {
     // fire subscriptions
     for (let s of this.subscriptions) {
       if (s.type == src_node.type && s.relation == r.relation) {
+         await new Promise(resolve => setTimeout(resolve, ANIMATE_DELAY));
          s.inspector.onRelation(r);
       }
     }

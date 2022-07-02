@@ -3,7 +3,32 @@
   <head>
     <meta charset="utf-8"/>
     <title>ChainSpider</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.5.0/bluebird.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.min.js"></script>
+    <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+		
     <script type="module" src="./web.mjs"></script>
+
+<style>
+	body {
+		font-family: helvetica neue, helvetica, liberation sans, arial, sans-serif;
+		font-size: 14px;
+	}
+
+	#cy {
+		width: 100%;
+		height: 600;
+		z-index: 999;
+	}
+
+	h1 {
+		opacity: 0.5;
+		font-size: 1em;
+		font-weight: bold;
+	}
+</style>
+    
   </head>
   <body>
     <h1>ChainSpider</h1>
@@ -13,6 +38,7 @@
       Contract: <input type="text" value="0xa34f2dbab310ab8adba3682dc8978d29ed8a9c7e" size=40 id="addr"> <input type=button onClick='document.onStartClick()' value='Start'>
       
       <div width=800 height=400 id='messages'></div>
+      <div id=cy></div>
     </form>
     </div>
   </body>
