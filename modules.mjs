@@ -1,9 +1,7 @@
 import { Inspector, Relation } from './chainspider.mjs';
 import web3 from './blockchain.mjs';
 import { bep20, pancakeLP } from './lib/abi.mjs';
-//import fetch from 'node-fetch';
 import fetch from 'cross-fetch';
-//import * as cheerio from 'cheerio';
 
 export class ContractFinder extends Inspector {
   constructor(cs) { 
@@ -155,9 +153,12 @@ export class TopHoldersChecker extends Inspector {
     
     let ts = BigInt(totalSupply) / BigInt(10**decimals);
     
-    let balances = {};
+    let report = { 'balances': {}, totalSupply, decimals }
+    
+    let balances = report.balances;
     for (let holder of holders) {
       balances[holder] = await token_abi.methods.balanceOf(holder).call();
+
       console.log(this.id, holder, balances[holder]);
       
       let b = BigInt(balances[holder]) / BigInt(10**decimals);
@@ -169,8 +170,9 @@ export class TopHoldersChecker extends Inspector {
       } else if (ratio > 33.0) {
         r.src_node.reportMessage(this.id, -25, 'Token holder '+holder+' has over 33% of supply.');
       }
-      
     }
+    
+    this.cs.createRelation(r.src_node, 'top-holders', this.cs.createNode('TopHoldersReport', report));
   }
 }
 
@@ -195,48 +197,20 @@ export class TopHoldersFinder extends Inspector {
     let addr = r.src_node.relative('is-contract').val;
     if (this.auto_expand_exclude.indexOf(addr) > -1 || !this.auto_expand) { return; }
     
-    let url = 'https://bscscan.com/token/tokenholderchart/'+addr+'?range='+this.top; 
+    let url = 'https://faas-tor1-70ca848e.doserverless.co/api/v1/web/fn-cac7949f-cce3-45ab-9d17-9285a0935f75/chainspider/getTopHolders?addr='+addr+'&top='+this.top; 
 
     let res = await fetch(url);
     if (res.status != 200) {
        r.dst_node.reportMessage(this.id, 0, 'Lookup failed with result code '+res.status);
        return;
     }
-
-    let doc = cheerio.load(await res.text());
     
-    doc('#ContentPlaceHolder1_resultrows table tbody tr').each( (idx, row) => {
-      let h = [];
-
-      for (let i=0; i<row.children.length; i++) {
-        if (row.children[i].name == 'td') {
-          let cell = row.children[i].children[0];
-          if (cell.type != 'text') { 
-            let subanchor = doc(cell).find('a');
-            let a = subanchor.get(0);
-            
-            let caption = subanchor.text();
-            let url = a.attribs.href;
-           
-            let addr = url.substring( url.indexOf('?a=')+3 );
-            
-            h.push(addr);
-            h.push(caption);
-
-          } else {
-            h.push(cell.data);
-          }
-        }
-      }
-      
-      if (h.length == 5) {
-        let [idx, addr, caption, tokens, pct] = h;
-        
-        let n = this.cs.createNode('BlockchainAddress', addr);
+    let data = await res.json();
+    
+    for (let holder of data) {        
+        let n = this.cs.createNode('BlockchainAddress', holder.address);
         this.cs.createRelation(n, 'holder', r.dst_node);
-      }
-
-    });
+    }
     
     this.cs.createEvent( r.dst_node, '@holders-expanded' );
     
@@ -248,6 +222,6 @@ export function registerModules(cs) {
   new ContractFinder(cs);
   new TokenFinder(cs);
   new WhitelistChecker(cs);
-  //new TopHoldersFinder(cs);
+  new TopHoldersFinder(cs);
   new TopHoldersChecker(cs);
 }
