@@ -1,3 +1,11 @@
+var _nextIndex = 0;
+
+class AutoIndexed {
+  constructor() {
+    this._id = _nextIndex++;
+  }
+}
+
 class RelationSet {
   constructor(node) {
     this.node = node;
@@ -32,8 +40,10 @@ class Message {
   }
 }
 
-class Node {
-  constructor(type, val) {   
+class Node extends AutoIndexed {
+  constructor(type, val) {
+    super();
+    
     this.type = type;
     this.val = val;
     this.relations = new RelationSet(this);
@@ -46,7 +56,7 @@ class Node {
   toString() { 
     let v = typeof this.val == 'string' ? this.val : JSON.stringify(this.val);
     if (v.length > 64) { v = v.substring(0,64) + '...'; }
-    return `${this.type}[${v}]`;
+    return `${this.type}#${this._id}[${v}]`;
   }
 
   relative(relation) {
@@ -80,15 +90,17 @@ export class Inspector {
  
 }
 
-export class Relation {
+export class Relation extends AutoIndexed {
   constructor(src_node, relation, dst_node) {
+    super();
+    
     this.src_node = src_node;
     this.relation = relation;
     this.dst_node = dst_node;
   }
   
   toString() {
-    return `${this.src_node.toString()} :${this.relation} ${this.dst_node !== true ? this.dst_node.toString() : ""}`;
+    return `# ${this._id} ${this.src_node.toString()} :${this.relation} ${this.dst_node !== true ? this.dst_node.toString() : ""}`;
   }
   
 }
