@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "cross-fetch": "^3.1.5",
+    "cytoscape-cise": "^1.0.0",
+    "cytoscape-klay": "^3.1.4",
     "parcel": "^2.6.2",
     "web3": "^1.7.4"
   },

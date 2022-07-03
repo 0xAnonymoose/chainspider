@@ -198,8 +198,6 @@ export class TopHoldersChecker extends Inspector {
   }
 }
 
-const ANIMATE_DELAY = 2000;
-
 export class TopHoldersFinder extends Inspector {
   constructor(cs) { 
     super(cs, 'TokenFinder');
@@ -235,7 +233,7 @@ export class TopHoldersFinder extends Inspector {
         let n = this.cs.createNode('BlockchainAddress', holder.address);
         this.cs.createRelation(n, 'holder', r.dst_node);
         
-        await new Promise(resolve => setTimeout(resolve, ANIMATE_DELAY));
+        //await new Promise(resolve => setTimeout(resolve, ANIMATE_DELAY));
     }
     
     this.cs.createEvent( r.dst_node, '@holders-expanded' );

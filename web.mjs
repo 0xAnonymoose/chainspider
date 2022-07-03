@@ -1,11 +1,40 @@
 import { ChainSpider } from './chainspider.mjs';
 import { registerModules } from './modules.mjs';
+import klay  from 'cytoscape-klay';
 
 function proxyUrl(url) {
   return 'https://corsproxy.io/?' + encodeURI(url);
 }
 
 class ChainSpiderWeb extends ChainSpider {
+  constructor() {
+    super();
+    
+    this.animq = [];
+    this.animating = false;
+  }
+  
+  pushChange(x) {
+    if (x) {
+      // adding new element
+      if (this.animating) { console.log('Animation queued'); this.animq.push(x); return; }
+    } else {
+      if (this.animq.length == 0) {
+        console.log('Animations done!');
+        this.animating = false;
+        return;
+      } else {
+        console.log('Animation continues');
+        x = this.animq.shift();
+      }
+    }
+    
+    console.log('Animating', x);
+    this.animating = true;
+    window.cy.add(x);
+    window.updateLayout( this.pushChange.bind(this) );
+  }
+  
   onNode(node) {
     super.onNode(node);
        
@@ -13,8 +42,8 @@ class ChainSpiderWeb extends ChainSpider {
     if (typeof node.val == 'string') { data.name = node.val; } else { data = {...data, ...node.val}; }
     if (data.logoURI) { data.logoURI = proxyUrl(data.logoURI); }
     
-    window.cy.add( { group: 'nodes', data } );
-    window.updateLayout();
+    this.pushChange( { group: 'nodes', data } );
+    //window.updateLayout();
     
     if (node.type == 'TokenBEP20') {
       document.getElementById('messages').innerHTML += '<p>BEP20 detected '+node.val.name; 
@@ -27,8 +56,8 @@ class ChainSpiderWeb extends ChainSpider {
     
     // event?
     if (relation.dst_node != true) {
-      window.cy.add( { group: 'edges', data: { id: 'e'+relation._id, source: 'n'+relation.src_node._id, target: 'n'+relation.dst_node._id, relation: relation.relation } } );
-      window.updateLayout();
+      this.pushChange( { group: 'edges', data: { id: 'e'+relation._id, source: 'n'+relation.src_node._id, target: 'n'+relation.dst_node._id, relation: relation.relation } } );
+      //window.updateLayout();
     }
     
     if (relation.relation == 'is-whitelisted') {
@@ -147,9 +176,21 @@ document.addEventListener('DOMContentLoaded', function(){
 		elements: { nodes: [], edges: [] }
 	});
 	
-        window.updateLayout = ()=>{
-           window.cy.layout({name: 'cose', animate: 'end'}).run();
-           window.cy.fit( window.cy.elements() );
+	//window.cy.use (cise);
+	
+	const ANIMATION_DURATION = 400;
+	
+        window.updateLayout = async(cb)=>{
+           let layout = window.cy.layout({
+             name: 'klay',
+             animate: 'end',
+             animationDuration: ANIMATION_DURATION,
+             ready: ()=>{ console.log('ready'); },
+             done: ()=>{ console.log('done'); }
+           });
+           layout.run();
+           await new Promise(resolve => setTimeout(resolve, ANIMATION_DURATION));
+           cb();         
         };
 
 	var cs = window.cs = new ChainSpiderWeb();

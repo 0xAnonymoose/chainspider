@@ -113,8 +113,6 @@ class Subscription {
   }
 }
 
-const ANIMATE_DELAY = 500;
-
 export class ChainSpider {
 
   constructor() {
@@ -165,7 +163,6 @@ export class ChainSpider {
     // fire subscriptions
     for (let s of this.subscriptions) {
       if (s.type == src_node.type && s.relation == r.relation) {
-         await new Promise(resolve => setTimeout(resolve, ANIMATE_DELAY));
          s.inspector.onRelation(r);
       }
     }
