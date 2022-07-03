@@ -18,8 +18,11 @@
 
 	#cy {
 		width: 100%;
-		height: 600;
-		z-index: 999;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 100;
 	}
 
 	h1 {
@@ -27,19 +30,39 @@
 		font-size: 1em;
 		font-weight: bold;
 	}
+	
+	#messages {
+	         width: 100%;
+	         height: 200;
+	         position: absolute;
+	         top: 100;
+	         left: 0;
+	         z-index: 200;
+	}
+	
+	#controls {
+	         position: absolute;
+	         top: 0;
+	         left: 0;
+	         z-index: 300;
+	         padding: 5px;
+	         margin: 3px;
+	         border: solid 1px black;
+	}
 </style>
     
   </head>
   <body>
-    <h1>ChainSpider</h1>
     
-    <div>
+    <div id='controls'>
+    <h1>ChainSpider</h1>
     <form>
       Contract: <input type="text" value="0xa34f2dbab310ab8adba3682dc8978d29ed8a9c7e" size=40 id="addr"> <input type=button onClick='document.onStartClick()' value='Start'>
-      
-      <div width=800 height=400 id='messages'></div>
-      <div id=cy></div>
     </form>
     </div>
+    
+    <div width=800 height=400 id='messages'></div>
+    
+    <div id=cy></div>
   </body>
 </html>

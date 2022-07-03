@@ -46,7 +46,7 @@ class ChainSpiderWeb extends ChainSpider {
     //window.updateLayout();
     
     if (node.type == 'TokenBEP20') {
-      document.getElementById('messages').innerHTML += '<p>BEP20 detected '+node.val.name; 
+      //document.getElementById('messages').innerHTML += '<p>BEP20 detected '+node.val.name; 
     }
 
   }
@@ -61,8 +61,8 @@ class ChainSpiderWeb extends ChainSpider {
     }
     
     if (relation.relation == 'is-whitelisted') {
-      document.getElementById('messages').innerHTML += '<p>'+relation.src_node.val.name+' is in the '+relation.dst_node.val.platform+' whitelist!';
-      document.getElementById('messages').innerHTML += '<img src='+relation.dst_node.val.logoURI+'>';
+      //document.getElementById('messages').innerHTML += '<p>'+relation.src_node.val.name+' is in the '+relation.dst_node.val.platform+' whitelist!';
+      //document.getElementById('messages').innerHTML += '<img src='+relation.dst_node.val.logoURI+'>';
     }
 
   }
@@ -99,6 +99,15 @@ document.addEventListener('DOMContentLoaded', function(){
 		    'shape': 'round-rectangle',		    
 		    'background-color': 'green',
 		    'content': 'data(name)'
+		  }
+		},
+		{
+		  selector: 'node[type="TopHoldersReport"]',
+		  style: {
+		    'height': 64,
+		    'width': 64,
+		    'shape': 'round-rectangle',		    
+		    'background-image': require('/icons/report.png')
 		  }
 		},
 		{
@@ -185,8 +194,10 @@ document.addEventListener('DOMContentLoaded', function(){
              name: 'klay',
              animate: 'end',
              animationDuration: ANIMATION_DURATION,
-             ready: ()=>{ console.log('ready'); },
-             done: ()=>{ console.log('done'); }
+             klay: {
+               nodeLayering: 'NETWORK_SIMPLEX',
+               nodePlacement: 'BRANDES_KOEPF'
+             }
            });
            layout.run();
            await new Promise(resolve => setTimeout(resolve, ANIMATION_DURATION));
