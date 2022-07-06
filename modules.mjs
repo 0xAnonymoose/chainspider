@@ -284,7 +284,7 @@ export class LP1inchFinder extends Inspector {
 }
 
 export class TopHoldersFinder extends Inspector {
-  constructor(cs) { 
+  constructor(cs, doSubscribe = true) { 
     super(cs, 'TokenFinder');
     
     this.top = 25;
@@ -296,7 +296,9 @@ export class TopHoldersFinder extends Inspector {
       '0xe9e7cea3dedca5984780bafc599bd69add087d56'   // BUSD
     ];
     
-    this.subscribe('Contract', 'is-token');
+    if (doSubscribe) {
+      this.subscribe('Contract', 'is-token');
+    }
   }
 
 
@@ -331,9 +333,11 @@ export function registerModules(cs) {
   new ContractFinder(cs);
   new TokenFinder(cs);
   new WhitelistChecker(cs);
-  //new TopHoldersFinder(cs);
   new TopHoldersChecker(cs);
   new PairTokenFinder(cs);
   new LP1inchFinder(cs);
   new LPChecker(cs);
+  
+  let THF = new TopHoldersFinder(cs, false);
+  return { THF };
 }

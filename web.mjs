@@ -1,4 +1,4 @@
-import { ChainSpider } from './chainspider.mjs';
+import { ChainSpider, Relation } from './chainspider.mjs';
 import { registerModules } from './modules.mjs';
 import klay  from 'cytoscape-klay';
 
@@ -47,7 +47,7 @@ class ChainSpiderWeb extends ChainSpider {
   onNode(node) {
     super.onNode(node);
        
-    let data = { id: 'n'+node._id, type: node.type, name: node.toString() };
+    let data = { id: 'n'+node._id, type: node.type, name: node.toString(), raw: node };
     if (typeof node.val == 'string') { data.name = node.val; } else { data = {...data, ...node.val}; }
     if (data.logoURI) { data.logoURI = proxyUrl(data.logoURI); }
     
@@ -194,7 +194,35 @@ document.addEventListener('DOMContentLoaded', function(){
 		elements: { nodes: [], edges: [] }
 	});
 	
+	window.expandTopHolders = function(id) {
+	  console.log('expanding', id);
+	  console.log(window.cs.nodes);
+	  
+	  let target_node;
+	  for (let node of window.cs.nodes) {
+	    if (node._id == id) { target_node = node; break; }
+	  }
+	  if (!target_node) { return; }
+	  
+	  let contract = target_node.relative('is-token');
+	  
+	  let r = new Relation(contract, 'is-token', target_node);
+	  console.log(r);
+	  window.actions.THF.onRelation(r);
+	}
+	
 	//window.cy.use (cise);
+	cy.on('tap', 'node', function (evt) {
+	   let data = evt.target.data();
+	   
+	   let s = data.raw.type + ' ' + (typeof data.raw.val == 'object' ? JSON.stringify(data.raw.val) : data.raw.val);
+	   
+	   if (data.raw.type == 'TokenBEP20') {
+	     s += `<br><input type=button value="Expand Top Holders" onClick=" window.expandTopHolders(${data.raw._id}); ">`;
+	   }
+           console.log(s);
+           document.getElementById('panel').innerHTML = s;
+        });
 	
 	const ANIMATION_DURATION = 400;
 	
@@ -214,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function(){
         };
 
 	var cs = window.cs = new ChainSpiderWeb();
-	registerModules(cs);
+	var actions = window.actions = registerModules(cs);
 
 	function onStartClick(e) {
 	  cs.createNode('BlockchainAddress', document.getElementById('addr').value);

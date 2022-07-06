@@ -18,7 +18,7 @@
 
 	#cy {
 		width: 100%;
-		height: 100%;
+		height: 80%;
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -32,7 +32,7 @@
 	}
 	
 	#messages {
-	         width: 100%;
+	         width: 300;
 	         height: 200;
 	         position: absolute;
 	         top: 100;
@@ -49,6 +49,17 @@
 	         margin: 3px;
 	         border: solid 1px black;
 	}
+	
+	#panel {
+	    position: absolute;
+	    right: 0;
+	    top: 80%;
+	    height: 20%;
+	    width: 100%;
+	    background-color: #eeeeee;
+	    z-index: 300;
+	    overflow-wrap: anywhere;
+	}
 </style>
     
   </head>
@@ -64,5 +75,7 @@
     <div width=800 height=400 id='messages'></div>
     
     <div id=cy></div>
+    
+    <div id=panel>Enter a BSC token contract address and click Start, then click on any item in the research graph.</div>
   </body>
 </html>
