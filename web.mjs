@@ -17,19 +17,28 @@ class ChainSpiderWeb extends ChainSpider {
   pushChange(x) {
     if (x) {
       // adding new element
-      if (this.animating) { console.log('Animation queued'); this.animq.push(x); return; }
+      if (this.animating) { 
+        //console.log('Animation queued');
+        this.animq.push(x);
+        return;
+      }
     } else {
       if (this.animq.length == 0) {
-        console.log('Animations done!');
+        //console.log('Animations done!');
         this.animating = false;
         return;
       } else {
-        console.log('Animation continues');
+        //console.log('Animation continues');
         x = this.animq.shift();
+        // if an edge follows a node, grab them both at once to skip animations we dont need.
+        if (x.group == 'nodes' && this.animq.length > 0 && this.animq[0].group == 'edges') {
+          window.cy.add(x);
+          x = this.animq.shift();
+        }
       }
     }
     
-    console.log('Animating', x);
+    //console.log('Animating', x);
     this.animating = true;
     window.cy.add(x);
     window.updateLayout( this.pushChange.bind(this) );
