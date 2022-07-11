@@ -268,6 +268,11 @@ export class LP1inchFinder extends Inspector {
     let d = await fetch(url);
     let j = await d.json();
     let markets = [];
+    
+    if (!j.results) {
+      console.error('1inch API failed');
+      return;
+    }
    
     for (let r of j.results) {
       for (let route of r.routes) {

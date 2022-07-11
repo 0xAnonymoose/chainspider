@@ -248,6 +248,13 @@ document.addEventListener('DOMContentLoaded', function(){
 	  cs.createNode('BlockchainAddress', document.getElementById('addr').value);
 	}
 	document.onStartClick = onStartClick;
+	
+	const params = new URLSearchParams(window.location.search);
+        const addr = params.get("addr");
+        if (addr) {
+          document.getElementById('addr').value = addr;
+          document.onStartClick();
+        }
 
 });
 
