@@ -1,6 +1,6 @@
 import { Inspector, Relation } from './chainspider.mjs';
 import web3 from './blockchain.mjs';
-import { bep20, pancakeLP } from './lib/abi.mjs';
+import { bep20, pancakeLP, pancakeFactory } from './lib/abi.mjs';
 import fetch from 'cross-fetch';
 
 export class ContractFinder extends Inspector {
@@ -77,6 +77,7 @@ export class TokenFinder extends Inspector {
   async onRelation(r) {
     let addr = r.src_node.val;  
     const token_abi = await new web3.eth.Contract( bep20, addr );
+    const lp_abi = await new web3.eth.Contract( pancakeLP, addr );
     
     let symbol;
     try {
@@ -84,10 +85,20 @@ export class TokenFinder extends Inspector {
     } catch(err) {
       console.error(this.id, 'error', err);
       return;
-    }     
+    }
     
-    if (symbol == 'Cake-LP') {
-      let lp_abi = await new web3.eth.Contract( pancakeLP, addr );
+    let is_amm = false;
+    try {
+       let reserves = await lp_abi.methods.getReserves().call();
+       is_amm = true;
+    } catch(err) {
+       if (err.message != 'Returned error: execution reverted' && err.message != "Returned values aren't valid, did it run Out of Gas? You might also see this error if you are not using the correct ABI for the contract you are retrieving data from, requesting data from a block number that does not exist, or querying a node which is not fully synced.") {
+         console.error(err.message);
+         return;
+       }
+    }
+    
+    if (is_amm) {
       let asset;
       let base;
       try {
@@ -98,7 +109,23 @@ export class TokenFinder extends Inspector {
         return;
       }
 
-      let t = this.cs.createNode('TokenAMM', { asset: asset.toLowerCase(), base: base.toLowerCase() });
+      let asset_name;
+      let base_name;
+      
+      try {
+        const asset_abi = await new web3.eth.Contract( bep20, asset );
+        const base_abi = await new web3.eth.Contract( bep20, base );
+        
+        asset_name = await asset_abi.methods.symbol().call();
+        base_name = await base_abi.methods.symbol().call();
+        
+      } catch(err) {
+        console.error(this.id, 'error', err);
+        return;
+      }
+      
+      let name = asset_name+'/'+base_name+' '+symbol;
+      let t = this.cs.createNode('TokenAMM', { asset: asset.toLowerCase(), base: base.toLowerCase(), name, asset_name, base_name });
       this.cs.createRelation(r.dst_node, 'is-amm', t);
       
       let a = this.cs.createNode('BlockchainAddress', asset.toLowerCase());     
@@ -228,7 +255,7 @@ export class LPChecker extends Inspector {
     let asset_ratio = parseFloat(asset_ratio_1e3.toString())/10.0;
     
     if (asset_ratio > 100.0) {
-      r.dst_node.reportMessage(this.id, -100, 'LP has '+asset_ratio.toFixed(0)+'% of asset supply, has likely been rugged.');
+      r.dst_node.reportMessage(this.id, -100, r.dst_node.val.name+' has '+asset_ratio.toFixed(0)+'% of asset supply, has likely been rugged.');
     }
     
     let baseBNB_1e3 = BigInt(baseReserve) / BigInt(10**15);
@@ -236,7 +263,7 @@ export class LPChecker extends Inspector {
     console.log(baseBNB);
     
     if (baseBNB < 1) {
-      r.dst_node.reportMessage(this.id, -100, 'LP has very low liquidity, has likely been rugged.');
+      r.dst_node.reportMessage(this.id, -100, r.dst_node.val.name+' has very low liquidity, has likely been rugged.');
     }
     
     //console.log(this.id, assetReserve, baseReserve, assetSupply, asset_ratio);
@@ -284,6 +311,45 @@ export class LP1inchFinder extends Inspector {
     }
     
     console.log(markets);
+  } 
+
+}
+
+export class LPFactoryFinder extends Inspector {
+  constructor(cs, factory, factory_name = '') { 
+    super(cs, 'LPFactoryFinder-'+factory_name);
+    
+    if (!factory) { new Exception('Factory address must be provided!'); }
+    
+    this.auto_expand = true;
+    this.base_pairs = [ 
+      '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c',  // WBNB
+      '0xe9e7cea3dedca5984780bafc599bd69add087d56'   // BUSD
+    ];
+    
+    this.factory = factory;
+    this.factory_name = factory_name;
+    this.factoryAbi = null;
+    
+    this.subscribe('Contract', 'is-token');
+  }
+  
+  async onRelation(r) {
+    let addr = r.src_node.relative('is-contract').val;
+    if (this.base_pairs.indexOf(addr) > -1 || !this.auto_expand) { return; }
+    
+    if (!this.factoryAbi) {
+      this.factoryAbi = await new web3.eth.Contract( pancakeFactory, this.factory );
+    }
+    
+    for (let base of this.base_pairs) {
+      let candidate = await this.factoryAbi.methods.getPair( addr, base ).call();
+      console.log(addr, base, candidate);
+      if (candidate != '0x0000000000000000000000000000000000000000') {
+        this.cs.createNode( 'BlockchainAddress', candidate.toLowerCase() );
+      }
+    }
+
   } 
 
 }
@@ -340,8 +406,14 @@ export function registerModules(cs) {
   new WhitelistChecker(cs);
   new TopHoldersChecker(cs);
   new PairTokenFinder(cs);
-  new LP1inchFinder(cs);
   new LPChecker(cs);
+  
+  //new LP1inchFinder(cs);
+  
+  new LPFactoryFinder(cs, '0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73', 'PancakeSwap');
+  new LPFactoryFinder(cs, '0x86407bEa2078ea5f5EB5A52B2caA963bC1F889Da', 'BabySwap');
+  new LPFactoryFinder(cs, '0x0841BD0B734E4F5853f0dD8d7Ea041c241fb0Da6', 'ApeSwap');
+  new LPFactoryFinder(cs, '0x858E3312ed3A876947EA49d572A7C42DE08af7EE', 'BiSwap');
   
   let THF = new TopHoldersFinder(cs, false);
   return { THF };

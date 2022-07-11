@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function(){
 		    'width': 40,
 		    'shape': 'round-rectangle',		    
 		    'background-color': 'purple',
-		    'content': 'LP'
+		    'content': 'data(name)'
 		  }
 		},
 		{

@@ -29,17 +29,16 @@ Network graph based solution for Blockchain forensics, malware detection and mor
 
 ```
 [x] UX plumbing for query parmeters
+[x] LP discover via routers (PCS, Ape, Biswap, Babyswap)
+[x] Apeawap, Biswap, Babyswap AMM support
 [ ] Move node/edge style definitions into modules
 [ ] Contract download solidity code
 [ ] Contract blockchain-malware checks
-[ ] Apeawap, Biswap, Babyswap AMM support
 [-] UX for Messaging and Scoring (improved)
 [-] UX for action panel (improved)
-[ ] Deployer identification
-[ ] LP discover via routers (PCS, Ape, Biswap, Babyswap)
-[ ] Discover and check Locks and Locked tokens
-[ ] Discover and check ICO 
-
+[ ] Deployer discovery
+[ ] Discover Locks and Locked tokens
+[ ] Discover ICO 
 ```
 
 ## Open Beta
@@ -49,6 +48,8 @@ Network graph based solution for Blockchain forensics, malware detection and mor
 [ ] Deployer blacklist check 
 [ ] Deployer sanity checks
 [ ] Deployer panel: expand all contracts
+[ ] Lock checks
+[ ] ICO checks
 [ ] LP top holder discover and checks
 [ ] BlockchainTransaction
 [ ] Transaction panel: event decoder 
