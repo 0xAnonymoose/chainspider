@@ -32,11 +32,11 @@ Network graph based solution for Blockchain forensics, malware detection and mor
 [x] LP discover via routers (PCS, Ape, Biswap, Babyswap)
 [x] Apeawap, Biswap, Babyswap AMM support
 [x] Refactor Messages
-[ ] Move node/edge style definitions into modules
+[x] Move node/edge style definitions into modules
 [ ] Contract download solidity code
 [ ] Contract blockchain-malware checks
 [-] UX for Messaging and Scoring (improved)
-[-] UX for action panel (improved)
+[x] UX for action panel (improved)
 [ ] Deployer discovery
 [ ] Discover Locks and Locked tokens
 [ ] Discover ICO 

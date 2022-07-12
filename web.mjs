@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function(){
 	var cy = window.cy = cytoscape({
 		container: document.getElementById('cy'),
 
-	      style: [
+	        style: [
 		{
 		  selector: 'node',
 		  style: {
@@ -109,67 +109,14 @@ document.addEventListener('DOMContentLoaded', function(){
 		  }
 		},
 		{
-		  selector: 'node[type="TokenBEP20"]',
-		  style: {
-		    'height': 40,
-		    'width': 40,
-		    'shape': 'round-rectangle',		    
-		    'background-color': 'green',
-		    'content': 'data(name)'
-		  }
-		},
-		{
-		  selector: 'node[type="TopHoldersReport"]',
-		  style: {
-		    'height': 64,
-		    'width': 64,
-		    'shape': 'round-rectangle',		    
-		    'background-image': require('/icons/report.png')
-		  }
-		},
-		{
-		  selector: 'node[type="TokenAMM"]',
-		  style: {
-		    'height': 40,
-		    'width': 40,
-		    'shape': 'round-rectangle',		    
-		    'background-color': 'purple',
-		    'content': 'data(name)'
-		  }
-		},
-		{
 		  selector: 'edge',
 		  style: {
 		    'curve-style': 'bezier',
 		    "target-arrow-shape": "vee"
 		  }
 		},
-		{
-		  selector: 'edge[relation="holder"]',
-		  style: {
-		    'curve-style': 'bezier',
-		    'line-color': 'green',
-		    "target-arrow-shape": "square"
-		  }
-		},
-                {
-		  selector: 'edge[relation="trades-on"]',
-		  style: {
-		    'curve-style': 'bezier',
-		    'line-color': 'purple',
-		    "target-arrow-shape": "circle"
-		  }
-		},
-                {
-		  selector: 'edge[relation="bases"]',
-		  style: {
-		    'curve-style': 'bezier',
-		    'line-color': 'purple',
-		    "target-arrow-shape": "circle"
-		  }
-		},
 		...getAllStyles()			
-	      ],
+	        ],
 
 		elements: { nodes: [], edges: [] }
 	});
@@ -194,12 +141,20 @@ document.addEventListener('DOMContentLoaded', function(){
 	//window.cy.use (cise);
 	cy.on('tap', 'node', function (evt) {
 	   let data = evt.target.data();
+	   let s;
 	   
-	   let s = data.raw.type + ' ' + (typeof data.raw.val == 'object' ? JSON.stringify(data.raw.val) : data.raw.val);
-	   
-	   if (data.raw.type == 'TokenBEP20') {
-	     s += `<br><input type=button value="Expand Top Holders" onClick=" window.expandTopHolders(${data.raw._id}); ">`;
+	   if (window.cs.panels.hasOwnProperty(data.raw.type)) {
+	     s = window.cs.panels[data.raw.type]( data.raw );
+	   } else {
+	     s = data.raw.type + ' ' + (typeof data.raw.val == 'object' ? JSON.stringify(data.raw.val) : data.raw.val);
 	   }
+	   
+	   for (let r of window.cs.relations) {
+	     if (r.relation.substring(0,1) == '@') { continue; }
+	     if (r.src_node == data.raw) { s += '<p>'+r.relation+' => '+r.dst_node.toString(); }
+	     if (r.dst_node == data.raw) { s += '<p>'+r.src_node.toString()+' => '+r.relation; }
+	   }
+	  
            console.log(s);
            document.getElementById('panel').innerHTML = s;
         });

@@ -37,7 +37,7 @@ export class LPFactoryFinder extends Inspector {
       console.log('Checking', factory);
       for (let base of this.base_pairs) {
         let candidate = await this.abis[factory].methods.getPair( addr, base ).call();
-        console.log(addr, base, candidate);
+        //console.log(addr, base, candidate);
         if (candidate != '0x0000000000000000000000000000000000000000') {
           this.cs.createNode( 'BlockchainAddress', candidate.toLowerCase() );
         }

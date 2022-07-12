@@ -72,6 +72,10 @@ export class Inspector {
     this.cs.createSubscription(this, t, r);
   }
   
+  panel(t, f) {
+    this.cs.registerPanel(t, f);
+  }
+  
   async onRelation(r) {
   }
   
@@ -111,6 +115,7 @@ export class ChainSpider {
     this.relations = [];
     this.subscriptions = [];
     this.messages = [];
+    this.panels = {};
   }
 
   createNode(type, val) {
@@ -178,6 +183,10 @@ export class ChainSpider {
     let m = new Message(src, topic, score, msg);
     this.messages.push(m);
     this.onMessage(m);
+  }
+  
+  registerPanel(type, func) {
+    this.panels[type] = func;
   }
   
   onNode(node) {
