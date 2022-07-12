@@ -74,6 +74,10 @@ export class Inspector {
   
   async onRelation(r) {
   }
+  
+  static getStyles() {
+    return [];
+  }
  
 }
 

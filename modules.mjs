@@ -3,25 +3,8 @@ import web3 from './blockchain.mjs';
 import { bep20, pancakeLP, pancakeFactory } from './lib/abi.mjs';
 import fetch from 'cross-fetch';
 
-export class ContractFinder extends Inspector {
-  constructor(cs) { 
-    super(cs, 'ContractFinder');
-    this.subscribe('BlockchainAddress', '@on-create');
-  }
-  
-  async onRelation(r) {
-    let addr = r.src_node.val;
-    let code = await web3.eth.getCode( addr );
-    let source = null;
-    
-    if (code != '0x') {
-      let c = this.cs.createNode('Contract', { code, source } );
-      this.cs.createRelation(r.src_node, 'is-contract', c);
-    }
-    
-  }
-
-}
+import { ContractFinder} from './modules/ContractFinder.mjs';
+import { LPFactoryFinder } from './modules/LPFactoryFinder.mjs';
 
 function proxyUrl(url) {
   return 'https://corsproxy.io/?' + encodeURI(url);
@@ -66,6 +49,20 @@ export class WhitelistChecker extends Inspector {
     
   }
 
+  static getStyles() {
+    return [{
+		  selector: 'node[type="WhitelistedToken"]',
+		  style: {
+		    'height': 64,
+		    'width': 64,
+		    'shape': 'round-rectangle',		    
+		    'background-image': 'data(logoURI)',
+		    'background-color': 'white',
+		    'content': 'data(platform)'
+		  }
+	    }];    
+  }
+  
 }
 
 export class TokenFinder extends Inspector {
@@ -315,45 +312,6 @@ export class LP1inchFinder extends Inspector {
 
 }
 
-export class LPFactoryFinder extends Inspector {
-  constructor(cs, factory, factory_name = '') { 
-    super(cs, 'LPFactoryFinder-'+factory_name);
-    
-    if (!factory) { new Exception('Factory address must be provided!'); }
-    
-    this.auto_expand = true;
-    this.base_pairs = [ 
-      '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c',  // WBNB
-      '0xe9e7cea3dedca5984780bafc599bd69add087d56'   // BUSD
-    ];
-    
-    this.factory = factory;
-    this.factory_name = factory_name;
-    this.factoryAbi = null;
-    
-    this.subscribe('Contract', 'is-token');
-  }
-  
-  async onRelation(r) {
-    let addr = r.src_node.relative('is-contract').val;
-    if (this.base_pairs.indexOf(addr) > -1 || !this.auto_expand) { return; }
-    
-    if (!this.factoryAbi) {
-      this.factoryAbi = await new web3.eth.Contract( pancakeFactory, this.factory );
-    }
-    
-    for (let base of this.base_pairs) {
-      let candidate = await this.factoryAbi.methods.getPair( addr, base ).call();
-      console.log(addr, base, candidate);
-      if (candidate != '0x0000000000000000000000000000000000000000') {
-        this.cs.createNode( 'BlockchainAddress', candidate.toLowerCase() );
-      }
-    }
-
-  } 
-
-}
-
 export class TopHoldersFinder extends Inspector {
   constructor(cs, doSubscribe = true) { 
     super(cs, 'TokenFinder');
@@ -409,12 +367,15 @@ export function registerModules(cs) {
   new LPChecker(cs);
   
   //new LP1inchFinder(cs);
-  
-  new LPFactoryFinder(cs, '0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73', 'PancakeSwap');
-  new LPFactoryFinder(cs, '0x86407bEa2078ea5f5EB5A52B2caA963bC1F889Da', 'BabySwap');
-  new LPFactoryFinder(cs, '0x0841BD0B734E4F5853f0dD8d7Ea041c241fb0Da6', 'ApeSwap');
-  new LPFactoryFinder(cs, '0x858E3312ed3A876947EA49d572A7C42DE08af7EE', 'BiSwap');
+  new LPFactoryFinder(cs);
   
   let THF = new TopHoldersFinder(cs, false);
   return { THF };
+}
+
+export function getAllStyles() {
+  return [
+   ...ContractFinder.getStyles(),
+   ...WhitelistChecker.getStyles()
+  ];
 }

@@ -1,5 +1,5 @@
 import { ChainSpider, Relation } from './chainspider.mjs';
-import { registerModules } from './modules.mjs';
+import { registerModules, getAllStyles } from './modules.mjs';
 import klay  from 'cytoscape-klay';
 
 function proxyUrl(url) {
@@ -138,27 +138,6 @@ document.addEventListener('DOMContentLoaded', function(){
 		  }
 		},
 		{
-		  selector: 'node[type="WhitelistedToken"]',
-		  style: {
-		    'height': 64,
-		    'width': 64,
-		    'shape': 'round-rectangle',		    
-		    'background-image': 'data(logoURI)',
-		    'background-color': 'white',
-		    'content': 'data(platform)'
-		  }
-		},
-		{
-		  selector: 'node[type="Contract"]',
-		  style: {
-		    'height': 20,
-		    'width': 20,
-		    'shape': 'square',		    
-		    'background-color': 'blue',
-		    'content': 'Contract'
-		  }
-		},
-		{
 		  selector: 'edge',
 		  style: {
 		    'curve-style': 'bezier',
@@ -171,14 +150,6 @@ document.addEventListener('DOMContentLoaded', function(){
 		    'curve-style': 'bezier',
 		    'line-color': 'green',
 		    "target-arrow-shape": "square"
-		  }
-		},
-                {
-		  selector: 'edge[relation="is-contract"]',
-		  style: {
-		    'curve-style': 'bezier',
-		    'line-color': 'blue',
-		    "target-arrow-shape": "circle"
 		  }
 		},
                 {
@@ -196,7 +167,8 @@ document.addEventListener('DOMContentLoaded', function(){
 		    'line-color': 'purple',
 		    "target-arrow-shape": "circle"
 		  }
-		}			
+		},
+		...getAllStyles()			
 	      ],
 
 		elements: { nodes: [], edges: [] }
