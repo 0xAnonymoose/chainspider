@@ -35,8 +35,13 @@ Network graph based solution for Blockchain forensics, malware detection and mor
 [x] Move node/edge style definitions into modules
 [ ] Contract download solidity code
 [ ] Contract blockchain-malware checks
-[-] UX for Messaging and Scoring (improved)
-[x] UX for action panel (improved)
+[-] UX plumbing for Messaging and Scoring (improved)
+[x] UX plumbing for action panel (improved)
+[ ] Panel for BA and Contract with bscscan links
+[ ] Panel for WhitelistedToken
+[ ] Panel: better Relations table
+[ ] Panel: hyperlinks to Relation endpoints
+[ ] Panel: highlight active node
 [ ] Deployer discovery
 [ ] Discover Locks and Locked tokens
 [ ] Discover ICO 
