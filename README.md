@@ -31,6 +31,7 @@ Network graph based solution for Blockchain forensics, malware detection and mor
 [x] UX plumbing for query parmeters
 [x] LP discover via routers (PCS, Ape, Biswap, Babyswap)
 [x] Apeawap, Biswap, Babyswap AMM support
+[x] Refactor Messages
 [ ] Move node/edge style definitions into modules
 [ ] Contract download solidity code
 [ ] Contract blockchain-malware checks

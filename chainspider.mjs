@@ -32,9 +32,9 @@ class RelationSet {
 }
 
 class Message {
-  constructor (src, node, score, msg) {
+  constructor (src, topic, score, msg) {
     this.src = src;
-    this.node = node;
+    this.topic = topic;
     this.score = score;
     this.msg = msg;
   }
@@ -47,10 +47,6 @@ class Node extends AutoIndexed {
     this.type = type;
     this.val = val;
     this.relations = new RelationSet(this);
-    this.onMessage = null;
-    
-    this.totalScore = 0;
-    this.messages = [];
   } 
   
   toString() { 
@@ -62,16 +58,7 @@ class Node extends AutoIndexed {
   relative(relation) {
     return this.relations.getRelation(relation);
   }
-  
-  reportMessage(src, score, msg) {
-    let m = new Message(src, this, score, msg);
-    this.messages.push(m);
-    
-    this.totalScore = 0;
-    for (let i=0; i < this.messages.length; i++) { this.totalScore += this.messages[i].score; }
-    
-    if (this.onMessage != null) { this.onMessage(m); }
-  }
+
 }
 
 export class Inspector {
@@ -182,6 +169,12 @@ export class ChainSpider {
     this.subscriptions.push(s);
     return s;
   }
+ 
+  reportMessage(src, topic, score, msg) {
+    let m = new Message(src, topic, score, msg);
+    this.messages.push(m);
+    this.onMessage(m);
+  }
   
   onNode(node) {
     console.log('<CreatedNode>', node.toString());
@@ -192,8 +185,7 @@ export class ChainSpider {
   }
   
   onMessage(msg) {
-    console.log('<Message:'+msg.src+'>', msg.score, msg.msg);
-    console.log('<Score>', msg.node.toString(), msg.node.totalScore);  
+    console.log('<Message:'+msg.topic+'>', msg.score, msg.topic, msg.msg);  
   }
    
 }

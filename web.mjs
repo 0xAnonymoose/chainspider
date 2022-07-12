@@ -12,6 +12,8 @@ class ChainSpiderWeb extends ChainSpider {
     
     this.animq = [];
     this.animating = false;
+    
+    this.score = 0;
   }
   
   pushChange(x) {
@@ -78,10 +80,16 @@ class ChainSpiderWeb extends ChainSpider {
   
   onMessage(msg) {
     super.onMessage(msg);
+    
+    if (msg.topic != document.getElementById('addr').value) { return; }
+    
     let color = 'black';
     if (msg.score < 0) { color = 'red'; }
     if (msg.score > 0) { color = 'green'; }
-    document.getElementById('messages').innerHTML += '<p style="color: '+color+'">'+msg.msg; 
+    
+    document.getElementById('messages').innerHTML += '<p style="color: '+color+'"> '+msg.msg; 
+    
+    this.score += msg.score;
   }
 }
 

@@ -48,19 +48,19 @@ export class WhitelistChecker extends Inspector {
         if (wtaddr == addr) {
           let w = this.cs.createNode( 'WhitelistedToken', { 'platform': 'cmc', 'logoURI': wt.logoURI });
           this.cs.createRelation( r.dst_node, 'is-whitelisted', w );
-          r.dst_node.reportMessage( this.id, 100, 'Token '+name+' was found in the CoinMarketCap whitelist.' );
+          this.cs.reportMessage( this.id, addr, 100, 'Token '+name+' was found in the CoinMarketCap whitelist.' );
         } else {
-          r.dst_node.reportMessage( this.id, -100, 'Token attempting to impersonate ' + wt.name + ' but contract address is incorrect' );
+          this.cs.reportMessage( this.id, addr, -100, 'Token attempting to impersonate ' + wt.name + ' but contract address is incorrect' );
         }
       } else if (wt.name == name) {
         match = true;
-        r.dst_node.reportMessage( this.id, -50, 'Token attempting to impersonate ' + wt.name + ' but symbol is incorrect' );
+        this.cs.reportMessage( this.id, addr, -50, 'Token attempting to impersonate ' + wt.name + ' but symbol is incorrect' );
       }
 
     }
     
     if (!match) {
-      r.dst_node.reportMessage( this.id, -5, 'Token '+name+' was not found in CMC whitelist.' );
+      this.cs.reportMessage( this.id, addr, -5, 'Token '+name+' was not found in CMC whitelist.' );
       this.cs.createEvent( r.dst_node, '@not-whitelisted' );
     }
     
@@ -215,9 +215,9 @@ export class TopHoldersChecker extends Inspector {
       let ratio = parseFloat(bnr.toString())/10.0;
       
       if (ratio > 100.0) {
-        r.src_node.reportMessage(this.id, -100, 'Token holder '+holder+' has '+ratio.toFixed(0)+'% of supply.');
+        r.src_node.reportMessage(this.id, addr, -100, 'Token holder '+holder+' has '+ratio.toFixed(0)+'% of supply.');
       } else if (ratio > 33.0) {
-        r.src_node.reportMessage(this.id, -25, 'Token holder '+holder+' has over 33% of supply.');
+        r.src_node.reportMessage(this.id, addr, -25, 'Token holder '+holder+' has over 33% of supply.');
       }
     }
     
@@ -228,7 +228,7 @@ export class TopHoldersChecker extends Inspector {
 export class LPChecker extends Inspector {
 
   constructor(cs) { 
-    super(cs, 'LP1inchFinder');
+    super(cs, 'LPChecker');
     
     this.amount = 10000000000000;
     this.subscribe('Contract', 'is-amm');
@@ -255,7 +255,7 @@ export class LPChecker extends Inspector {
     let asset_ratio = parseFloat(asset_ratio_1e3.toString())/10.0;
     
     if (asset_ratio > 100.0) {
-      r.dst_node.reportMessage(this.id, -100, r.dst_node.val.name+' has '+asset_ratio.toFixed(0)+'% of asset supply, has likely been rugged.');
+      this.cs.reportMessage(this.id, asset, -100, r.dst_node.val.name+' has '+asset_ratio.toFixed(0)+'% of asset supply, has likely been rugged.');
     }
     
     let baseBNB_1e3 = BigInt(baseReserve) / BigInt(10**15);
@@ -263,7 +263,7 @@ export class LPChecker extends Inspector {
     console.log(baseBNB);
     
     if (baseBNB < 1) {
-      r.dst_node.reportMessage(this.id, -100, r.dst_node.val.name+' has very low liquidity, has likely been rugged.');
+      this.cs.reportMessage(this.id, asset, -100, r.dst_node.val.name+' has very low liquidity, has likely been rugged.');
     }
     
     //console.log(this.id, assetReserve, baseReserve, assetSupply, asset_ratio);
@@ -381,7 +381,7 @@ export class TopHoldersFinder extends Inspector {
 
     let res = await fetch(url);
     if (res.status != 200) {
-       r.dst_node.reportMessage(this.id, 0, 'Lookup failed with result code '+res.status);
+       this.cs.reportMessage(this.id, addr, 0, 'Top holders lookup failed with result code '+res.status);
        return;
     }
     
