@@ -1,6 +1,6 @@
 # chainspider
 
-Network graph based solution for Blockchain forensics, malware detection and more.
+Network graph based solution [for Blockchain forensics, malware detection and more.
 
 # Roadmap
 
@@ -39,12 +39,15 @@ Network graph based solution for Blockchain forensics, malware detection and mor
 [x] UX plumbing for action panel (improved)
 [ ] Panel for BA and Contract with bscscan links
 [ ] Panel for WhitelistedToken
-[ ] Panel: better Relations table
-[ ] Panel: hyperlinks to Relation endpoints
-[ ] Panel: highlight active node
+[ ] Panel for TokenAMM
+[x] Panel: better Relations table
+[x] Panel: hyperlinks to Relation endpoints
+[x] Panel: highlight active node
 [ ] Deployer discovery
 [ ] Discover Locks and Locked tokens
 [ ] Discover ICO 
+[ ] LPFactoryFinder: Multicall
+[ ] TokenFinder: Multicall
 ```
 
 ## Open Beta
