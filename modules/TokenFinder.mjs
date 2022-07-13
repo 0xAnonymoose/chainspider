@@ -6,6 +6,13 @@ export class TokenFinder extends Inspector {
   constructor(cs) { 
     super(cs, 'TokenFinder');
     
+    this.base_pairs = [ 
+      '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c',  // WBNB
+      '0xe9e7cea3dedca5984780bafc599bd69add087d56'   // BUSD
+    ];
+    
+    this.expand_base = false;
+    
     this.subscribe('BlockchainAddress', 'is-contract');
     this.panel('TokenBEP20', TokenFinder.panelBEP20);
   }
@@ -47,6 +54,15 @@ export class TokenFinder extends Inspector {
 
       let asset_name;
       let base_name;
+      let asset_is_zero = true;
+      
+      // Is this a backwards LP (where the base is reserves[1])?
+      if (this.base_pairs.indexOf(asset.toLowerCase()) > -1) {
+        asset_is_zero = false;
+        tmp = asset;
+        asset = base;
+        base = tmp;
+      }
       
       try {
         const asset_abi = await new web3.eth.Contract( bep20, asset );
@@ -61,7 +77,7 @@ export class TokenFinder extends Inspector {
       }
       
       let name = asset_name+'/'+base_name+' '+symbol;
-      let t = this.cs.createNode('TokenAMM', { asset: asset.toLowerCase(), base: base.toLowerCase(), name, asset_name, base_name });
+      let t = this.cs.createNode('TokenAMM', { asset: asset.toLowerCase(), base: base.toLowerCase(), name, asset_name, base_name, asset_is_zero });
       this.cs.createRelation(r.dst_node, 'is-amm', t);
       
       let a = this.cs.createNode('BlockchainAddress', asset.toLowerCase());     
@@ -69,9 +85,11 @@ export class TokenFinder extends Inspector {
         this.cs.createRelation( a.relative('is-contract').relative('is-token'), 'trades-on', t );
       }
       
-      let b = this.cs.createNode('BlockchainAddress', base.toLowerCase());      
-      if (b.relative('is-contract') && b.relative('is-contract').relative('is-token')) {
-        this.cs.createRelation( b.relative('is-contract').relative('is-token'), 'bases', t );
+      if (this.expand_base) {
+        let b = this.cs.createNode('BlockchainAddress', base.toLowerCase());      
+        if (b.relative('is-contract') && b.relative('is-contract').relative('is-token')) {
+          this.cs.createRelation( b.relative('is-contract').relative('is-token'), 'bases', t );
+        }
       }
       
       return;
