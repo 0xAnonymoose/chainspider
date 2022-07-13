@@ -115,6 +115,13 @@ document.addEventListener('DOMContentLoaded', function(){
 		    "target-arrow-shape": "vee"
 		  }
 		},
+		{
+		  selector: '.context',
+		  style: {
+		    'border-width': '4px',
+		    'border-color': 'red'
+		  }
+		},
 		...getAllStyles()			
 	        ],
 
@@ -161,6 +168,16 @@ document.addEventListener('DOMContentLoaded', function(){
 	
 	const ANIMATION_DURATION = 400;
 	
+	function onSelect(el) {
+	  console.log('select', el);
+	  el.target.addClass('context');
+	}
+	
+	function onUnselect(el) {
+	  console.log('unselect', el);
+	  el.target.removeClass('context');
+	}
+	
         window.updateLayout = async(cb)=>{
            let layout = window.cy.layout({
              name: 'klay',
@@ -172,6 +189,15 @@ document.addEventListener('DOMContentLoaded', function(){
              }
            });
            layout.run();
+           
+           let nodes = cy.$('node');
+           
+           nodes.removeListener( 'select', onSelect );
+           nodes.removeListener( 'unselect', onUnselect );
+           
+           nodes.on('select', onSelect );
+           nodes.on('unselect', onUnselect );
+           
            await new Promise(resolve => setTimeout(resolve, ANIMATION_DURATION));
            cb();         
         };
