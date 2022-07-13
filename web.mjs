@@ -80,16 +80,30 @@ class ChainSpiderWeb extends ChainSpider {
   
   onMessage(msg) {
     super.onMessage(msg);
+    let contextAddr = document.getElementById('addr').value;
+    let s = '';
+    let score = 0;
     
-    if (msg.topic != document.getElementById('addr').value) { return; }
+    for (let msg of this.messages) {
+  
+      if (msg.topic != contextAddr) { continue; }
     
-    let color = 'black';
-    if (msg.score < 0) { color = 'red'; }
-    if (msg.score > 0) { color = 'green'; }
+      let color = 'black';
+      if (msg.score < 0) { color = 'red'; }
+      if (msg.score > 0) { color = 'green'; }
     
-    document.getElementById('messages').innerHTML += '<p style="color: '+color+'"> '+msg.msg; 
+      s += '<p style="color: '+color+'"> '+msg.msg; 
     
-    this.score += msg.score;
+      score += msg.score;
+    }
+    
+    let scolor = 'black';
+    let snote = '';
+    if (score <= -100) { snote='SCAM'; scolor='red'; }
+    if (score >= 100) { snote='OK!'; scolor='green'; }
+    s += '<h3 style="color: '+scolor+'">Score '+score+" "+snote+'</h3>'
+    
+    document.getElementById('messages').innerHTML = s;
   }
 }
 
@@ -189,12 +203,12 @@ document.addEventListener('DOMContentLoaded', function(){
 	const ANIMATION_DURATION = 400;
 	
 	function onSelect(el) {
-	  console.log('select', el);
+	  //console.log('select', el);
 	  el.target.addClass('context');
 	}
 	
 	function onUnselect(el) {
-	  console.log('unselect', el);
+	  //console.log('unselect', el);
 	  el.target.removeClass('context');
 	}
 	
