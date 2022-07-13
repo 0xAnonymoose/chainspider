@@ -145,6 +145,24 @@ document.addEventListener('DOMContentLoaded', function(){
 	  window.actions.THF.onRelation(r);
 	}
 	
+	window.moveContext = function(id) {
+	  console.log('moveContext', id);
+	  let nodes = cy.$('node');
+
+	  for (let node of nodes) {
+	    if (node.hasClass('context')) {
+	      node.unselect();
+	    }
+	    
+	    let d = node.data();
+	    if (d.raw._id == id) {
+	      node.select();
+	      node.emit('tap');
+	    }
+	  }
+
+        }
+	
 	//window.cy.use (cise);
 	cy.on('tap', 'node', function (evt) {
 	   let data = evt.target.data();
@@ -156,11 +174,13 @@ document.addEventListener('DOMContentLoaded', function(){
 	     s = data.raw.type + ' ' + (typeof data.raw.val == 'object' ? JSON.stringify(data.raw.val) : data.raw.val);
 	   }
 	   
+	   s += '<table border=1><tr><th colspan=3>Relations</th></tr>'
 	   for (let r of window.cs.relations) {
 	     if (r.relation.substring(0,1) == '@') { continue; }
-	     if (r.src_node == data.raw) { s += '<p>'+r.relation+' => '+r.dst_node.toString(); }
-	     if (r.dst_node == data.raw) { s += '<p>'+r.src_node.toString()+' => '+r.relation; }
+	     if (r.src_node == data.raw) { s += '<tr><td>this</td><td>'+r.relation+'</td><td><a href=# onClick="moveContext('+r.dst_node._id+')">'+r.dst_node.toString()+"</a></td></tr>"; }
+	     if (r.dst_node == data.raw) { s += '<tr><td><a href=# onClick="moveContext('+r.src_node._id+')">'+r.src_node.toString()+'</a></td><td>'+r.relation+'</td><td>this</td></tr>'; }
 	   }
+	   s += '</table>';
 	  
            console.log(s);
            document.getElementById('panel').innerHTML = s;
