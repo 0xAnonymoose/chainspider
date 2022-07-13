@@ -59,7 +59,7 @@ export class TokenFinder extends Inspector {
       // Is this a backwards LP (where the base is reserves[1])?
       if (this.base_pairs.indexOf(asset.toLowerCase()) > -1) {
         asset_is_zero = false;
-        tmp = asset;
+        let tmp = asset;
         asset = base;
         base = tmp;
       }

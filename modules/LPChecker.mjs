@@ -12,7 +12,7 @@ export class LPChecker extends Inspector {
   }
 
   async onRelation(r) {
-    let { asset, base } = r.dst_node.val;
+    let { asset, base, asset_is_zero } = r.dst_node.val;
 
     let base_abi = await new web3.eth.Contract( bep20, base );
     let asset_abi = await new web3.eth.Contract( bep20, asset );
@@ -23,8 +23,8 @@ export class LPChecker extends Inspector {
     let reserves = await liquidityPair.methods.getReserves().call();
     
     //console.log(reserves);
-    let assetReserve = reserves[0];
-    let baseReserve = reserves[1];
+    let assetReserve = reserves[asset_is_zero?0:1];
+    let baseReserve = reserves[asset_is_zero?1:0];
     
     let assetSupply = await asset_abi.methods.totalSupply().call();
     
