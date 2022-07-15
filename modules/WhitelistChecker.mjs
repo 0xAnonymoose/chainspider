@@ -9,6 +9,7 @@ export class WhitelistChecker extends Inspector {
   constructor(cs) { 
     super(cs, 'WhitelistChecker');
     this.subscribe('Contract', 'is-token');
+    this.panel('WhitelistedToken', WhitelistChecker.panelWhitelist);
   }
   
   async onRelation(r) {
@@ -20,42 +21,84 @@ export class WhitelistChecker extends Inspector {
     let match = false;
     for (let wt of tokens) {
       let wtaddr = wt.address.toLowerCase();
+      let w;
       
       if (wt.name == name && wt.symbol == symbol) {
-        match = true;
         if (wtaddr == addr) {
-          let w = this.cs.createNode( 'WhitelistedToken', { 'platform': 'cmc', 'logoURI': wt.logoURI });
-          this.cs.createRelation( r.dst_node, 'is-whitelisted', w );
-          this.cs.reportMessage( this.id, addr, 100, 'Token '+name+' was found in the CoinMarketCap whitelist.' );
+          w = this.cs.createNode( 'WhitelistedToken', { 'status': 'found', 'platform': 'cmc', 'logoURI': wt.logoURI });
+          this.cs.reportMessage( this.id, addr, 100, 'Token '+name+' was found in the CoinMarketCap whitelist.', w );
         } else {
-          this.cs.reportMessage( this.id, addr, -100, 'Token attempting to impersonate ' + wt.name + ' but contract address is incorrect' );
+          w = this.cs.createNode( 'WhitelistedToken', { 'status': 'fake', 'platform': 'cmc', 'fake': wt.name });
+          this.cs.reportMessage( this.id, addr, -100, 'Token attempting to impersonate ' + wt.name + ' but contract address is incorrect', w );
         }
       } else if (wt.name == name) {
-        match = true;
-        this.cs.reportMessage( this.id, addr, -50, 'Token attempting to impersonate ' + wt.name + ' but symbol is incorrect' );
+        w = this.cs.createNode( 'WhitelistedToken', { 'status': 'fake', 'platform': 'cmc', 'fake': wt.symbol });
+        this.cs.reportMessage( this.id, addr, -50, 'Token attempting to impersonate ' + wt.name + ' but symbol is incorrect', w );
       }
-
+      
+      if (w) {
+        this.cs.createRelation( r.dst_node, 'whitelist-lookup', w );
+        match = true;
+      }
     }
     
     if (!match) {
-      this.cs.reportMessage( this.id, addr, -5, 'Token '+name+' was not found in CMC whitelist.' );
-      this.cs.createEvent( r.dst_node, '@not-whitelisted' );
+      let w = this.cs.createNode( 'WhitelistedToken', { 'status': 'not-found', 'platform': 'cmc' });
+      this.cs.reportMessage( this.id, addr, -5, 'Token '+name+' was not found in CMC whitelist.', w );
+      this.cs.createRelation( r.dst_node, 'whitelist-lookup', w );
     }
     
   }
 
+  static panelWhitelist(node) {
+    if (node.val.status == 'found') {
+      return `<h2>${node.val.status} in ${node.val.platform} whitelist</h2><img src=${node.val.logoURI}>`;
+    } else if (node.val.status == 'not-found') {
+      return `<h2>${node.val.status} in ${node.val.platform} whitelist</h2>`;
+    } else if (node.val.status == 'fake') {
+      return `<h2>${node.val.status} is a FAKE of ${node.val.fake}</h2>`
+    }
+  }
+  
   static getStyles() {
     return [{
-		  selector: 'node[type="WhitelistedToken"]',
+		  selector: 'node[type="WhitelistedToken"][status="found"]',
 		  style: {
 		    'height': 64,
 		    'width': 64,
-		    'shape': 'round-rectangle',		    
+		    'shape': 'round-rectangle',
+		    'border-width': '1px',
+		    'border-color': 'green',		    
 		    'background-image': 'data(logoURI)',
-		    'background-color': 'white',
-		    'content': 'data(platform)'
+		    'background-fit': 'contain',
+		    'background-color': 'white'
 		  }
-	    }];    
+	    },
+	    {
+	          selector: 'node[type="WhitelistedToken"][status="not-found"]',
+		  style: {
+		    'height': 32,
+		    'width': 32,
+		    'shape': 'round-rectangle',
+		    'border-width': '1px',
+		    'border-color': 'black',
+		    'background-image': require('../icons/notfound.png'),
+		    'background-color': 'white'
+		  }
+	    },
+	    {
+	          selector: 'node[type="WhitelistedToken"][status="fake"]',
+		  style: {
+		    'height': 32,
+		    'width': 32,
+		    'shape': 'round-rectangle',
+		    'border-width': '1px',
+		    'border-color': 'red',
+		    'background-image': require('../icons/error.png'),
+		    'background-color': 'white'
+		  }
+	    }
+	    ];    
   }
   
 }

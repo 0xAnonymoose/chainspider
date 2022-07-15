@@ -38,11 +38,12 @@ Network graph based solution [for Blockchain forensics, malware detection and mo
 [x] UX plumbing for Messaging and Scoring (improved)
 [x] UX plumbing for action panel (improved)
 [ ] Panel for BA and Contract with bscscan links
-[ ] Panel for WhitelistedToken
-[ ] Panel for TokenAMM
+[x] Panel for WhitelistedToken
+[x] Panel for TokenAMM
 [x] Panel: better Relations table
 [x] Panel: hyperlinks to Relation endpoints
 [x] Panel: highlight active node
+[x] Whitelist: Refactor to always output a report, add icons
 [ ] Deployer discovery
 [ ] Discover Locks and Locked tokens
 [ ] Discover ICO 

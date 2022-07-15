@@ -32,7 +32,7 @@ export class LPChecker extends Inspector {
     let asset_ratio = parseFloat(asset_ratio_1e3.toString())/10.0;
     
     if (asset_ratio > 100.0) {
-      this.cs.reportMessage(this.id, asset, -100, r.dst_node.val.name+' has '+asset_ratio.toFixed(0)+'% of asset supply, has likely been rugged.');
+      this.cs.reportMessage(this.id, asset, -100, r.dst_node.val.name+' has '+asset_ratio.toFixed(0)+'% of asset supply, has likely been rugged.', r.dst_node);
     }
     
     let baseBNB_1e3 = BigInt(baseReserve) / BigInt(10**15);
@@ -40,7 +40,7 @@ export class LPChecker extends Inspector {
     console.log(baseBNB);
     
     if (baseBNB < 1) {
-      this.cs.reportMessage(this.id, asset, -100, r.dst_node.val.name+' has very low liquidity, has likely been rugged.');
+      this.cs.reportMessage(this.id, asset, -100, r.dst_node.val.name+' has very low liquidity, has likely been rugged.', r.dst_node);
     }
     
     //console.log(this.id, assetReserve, baseReserve, assetSupply, asset_ratio);

@@ -92,7 +92,10 @@ class ChainSpiderWeb extends ChainSpider {
       if (msg.score < 0) { color = 'red'; }
       if (msg.score > 0) { color = 'green'; }
     
-      s += '<p style="color: '+color+'"> '+msg.msg; 
+      s += '<p style="color: '+color+'"> ';
+      if (msg.node) { s+= `<a href=# onClick="moveContext(${msg.node._id})">`; }
+      s += msg.msg; 
+      if (msg.node) { s+= '</a>'; }
     
       score += msg.score;
     }
@@ -118,9 +121,9 @@ document.addEventListener('DOMContentLoaded', function(){
 		  style: {
 		    'height': 20,
 		    'width': 20,
-		    'background-color': 'grey',
+		    'background-color': 'grey'
 		    //'content': 'data(name)'
-		  }
+		  }		  
 		},
 		{
 		  selector: 'edge',
@@ -188,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function(){
 	     s = data.raw.type + ' ' + (typeof data.raw.val == 'object' ? JSON.stringify(data.raw.val) : data.raw.val);
 	   }
 	   
-	   s += '<table border=1><tr><th colspan=3>Relations</th></tr>'
+	   s += '<p><table border=1><tr><th colspan=3>Relations</th></tr>'
 	   for (let r of window.cs.relations) {
 	     if (r.relation.substring(0,1) == '@') { continue; }
 	     if (r.src_node == data.raw) { s += '<tr><td>this</td><td>'+r.relation+'</td><td><a href=# onClick="moveContext('+r.dst_node._id+')">'+r.dst_node.toString()+"</a></td></tr>"; }

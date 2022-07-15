@@ -15,6 +15,7 @@ export class TokenFinder extends Inspector {
     
     this.subscribe('BlockchainAddress', 'is-contract');
     this.panel('TokenBEP20', TokenFinder.panelBEP20);
+    this.panel('TokenAMM', TokenFinder.panelAMM);
   }
   
   async onRelation(r) {
@@ -31,8 +32,9 @@ export class TokenFinder extends Inspector {
     }
     
     let is_amm = false;
+    let reserves;
     try {
-       let reserves = await lp_abi.methods.getReserves().call();
+       reserves = await lp_abi.methods.getReserves().call();
        is_amm = true;
     } catch(err) {
        if (err.message != 'Returned error: execution reverted' && err.message != "Returned values aren't valid, did it run Out of Gas? You might also see this error if you are not using the correct ABI for the contract you are retrieving data from, requesting data from a block number that does not exist, or querying a node which is not fully synced.") {
@@ -76,8 +78,8 @@ export class TokenFinder extends Inspector {
         return;
       }
       
-      let name = asset_name+'/'+base_name+' '+symbol;
-      let t = this.cs.createNode('TokenAMM', { asset: asset.toLowerCase(), base: base.toLowerCase(), name, asset_name, base_name, asset_is_zero });
+      let name = asset_name+'/'+base_name+'\n'+symbol;
+      let t = this.cs.createNode('TokenAMM', { asset: asset.toLowerCase(), base: base.toLowerCase(), name, asset_name, base_name, reserves, asset_is_zero });
       this.cs.createRelation(r.dst_node, 'is-amm', t);
       
       let a = this.cs.createNode('BlockchainAddress', asset.toLowerCase());     
@@ -116,27 +118,36 @@ export class TokenFinder extends Inspector {
   static panelBEP20(node) {
     return `${node.val.name} (${node.val.symbol})<br>Supply: ${node.val.totalSupply}<br><input type=button value="Expand Top Holders" onClick=" window.expandTopHolders(${node._id}); ">`
   }
+  
+  static panelAMM(node) {
+    let aidx = node.val.asset_is_zero?0:1;
+    let bidx = node.val.asset_is_zero?1:0;
+    return `<h2>${node.val.name}</h2>Asset: ${node.val.reserves[aidx]} ${node.val.asset_name}<br>Base: ${node.val.reserves[bidx]} ${node.val.base_name}`;
+  }  
 
   static getStyles() {
     return [
 		{
 		  selector: 'node[type="TokenBEP20"]',
 		  style: {
-		    'height': 40,
-		    'width': 40,
+		    'height': 32,
+		    'width': 32,
 		    'shape': 'round-rectangle',		    
 		    'background-color': 'green',
-		    'content': 'data(name)'
+		    'content': 'data(name)',
+		    'text-valign': 'center'
 		  }
 		},    
     		{
 		  selector: 'node[type="TokenAMM"]',
 		  style: {
-		    'height': 40,
-		    'width': 40,
+		    'height': 32,
+		    'width': 32,
 		    'shape': 'round-rectangle',		    
 		    'background-color': 'purple',
-		    'content': 'data(name)'
+		    'content': 'data(name)',
+		    'text-wrap': 'wrap',
+		    'text-valign': 'center'
 		  }
 		},
                 {

@@ -48,7 +48,8 @@ export class ContractFinder extends Inspector {
 	    'width': 20,
 	    'shape': 'square',		    
 	    'background-color': 'blue',
-	    'content': 'Contract'
+	    'content': 'C',
+	    'text-valign': 'center'
 	  }
 	},
         {

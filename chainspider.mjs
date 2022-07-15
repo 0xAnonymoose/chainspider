@@ -32,11 +32,12 @@ class RelationSet {
 }
 
 class Message {
-  constructor (src, topic, score, msg) {
+  constructor (src, topic, score, msg, node) {
     this.src = src;
     this.topic = topic;
     this.score = score;
     this.msg = msg;
+    this.node = node;
   }
 }
 
@@ -179,8 +180,8 @@ export class ChainSpider {
     return s;
   }
  
-  reportMessage(src, topic, score, msg) {
-    let m = new Message(src, topic, score, msg);
+  reportMessage(src, topic, score, msg, node) {
+    let m = new Message(src, topic, score, msg, node);
     this.messages.push(m);
     this.onMessage(m);
   }
