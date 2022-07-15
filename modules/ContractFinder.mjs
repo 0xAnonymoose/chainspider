@@ -1,5 +1,6 @@
 import { Inspector, Relation } from '../chainspider.mjs';
 import web3 from '../blockchain.mjs';
+import fetch from 'cross-fetch';
 
 /*
 ContractFinder checks if any new BlockchainAddress is a Contract.
@@ -15,8 +16,23 @@ export class ContractFinder extends Inspector {
     let addr = r.src_node.val;
     let code = await web3.eth.getCode( addr );
     let source = null;
+    let filenames = null;
     
-    if (code != '0x') {
+    if (code != '0x') {    
+      let data = null;
+      
+      try {
+         let r = await fetch('https://api.bscscan.com/api?module=contract&action=getsourcecode&address='+addr);
+         data = await r.json();
+         source = data.result[0].SourceCode;
+      } catch(e) {
+         if(data) { source = data.message; }
+      }
+         
+      if (source == null) {
+        this.cs.reportMessage(this.id, addr, -5, 'Failed to get solidity code from BSCScan');
+      }
+      
       let c = this.cs.createNode('Contract', { code, source } );
       this.cs.createRelation(r.src_node, 'is-contract', c);
     }

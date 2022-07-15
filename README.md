@@ -33,8 +33,8 @@ Network graph based solution [for Blockchain forensics, malware detection and mo
 [x] Apeawap, Biswap, Babyswap AMM support
 [x] Refactor Messages
 [x] Move node/edge style definitions into modules
-[ ] Contract download solidity code
-[ ] Contract blockchain-malware checks
+[x] Contract download solidity code
+[ ] Contract blockchain-malware checks (code, source, filenames)
 [x] UX plumbing for Messaging and Scoring (improved)
 [x] UX plumbing for action panel (improved)
 [ ] Panel for BA and Contract with bscscan links
