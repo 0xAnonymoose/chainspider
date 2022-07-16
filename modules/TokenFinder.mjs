@@ -31,6 +31,8 @@ export class TokenFinder extends Inspector {
       return;
     }
     
+    function bigToFloat(x,d=18) { return parseFloat(BigInt(x) / BigInt(10**(d-3)))/1000; }
+    
     let is_amm = false;
     let reserves;
     try {
@@ -66,6 +68,9 @@ export class TokenFinder extends Inspector {
         base = tmp;
       }
       
+      let asset_reserve;
+      let base_reserve;
+      
       try {
         const asset_abi = await new web3.eth.Contract( bep20, asset );
         const base_abi = await new web3.eth.Contract( bep20, base );
@@ -73,13 +78,16 @@ export class TokenFinder extends Inspector {
         asset_name = await asset_abi.methods.symbol().call();
         base_name = await base_abi.methods.symbol().call();
         
+        asset_reserve = bigToFloat(reserves[asset_is_zero?0:1], await asset_abi.methods.decimals().call());
+        base_reserve = bigToFloat(reserves[asset_is_zero?1:0], await base_abi.methods.decimals().call());
+        
       } catch(err) {
         console.error(this.id, 'error', err);
         return;
       }
       
       let name = asset_name+'/'+base_name+'\n'+symbol;
-      let t = this.cs.createNode('TokenAMM', { asset: asset.toLowerCase(), base: base.toLowerCase(), name, asset_name, base_name, reserves, asset_is_zero });
+      let t = this.cs.createNode('TokenAMM', { asset: asset.toLowerCase(), base: base.toLowerCase(), name, asset_name, base_name, asset_reserve, base_reserve, asset_is_zero });
       this.cs.createRelation(r.dst_node, 'is-amm', t);
       
       let a = this.cs.createNode('BlockchainAddress', asset.toLowerCase());     
@@ -120,9 +128,7 @@ export class TokenFinder extends Inspector {
   }
   
   static panelAMM(node) {
-    let aidx = node.val.asset_is_zero?0:1;
-    let bidx = node.val.asset_is_zero?1:0;
-    return `<h2>${node.val.name}</h2>Asset: ${node.val.reserves[aidx]} ${node.val.asset_name}<br>Base: ${node.val.reserves[bidx]} ${node.val.base_name}`;
+    return `<h2>${node.val.name}</h2>Asset: ${node.val.asset_reserve} ${node.val.asset_name}<br>Base: ${node.val.base_reserve} ${node.val.base_name}`;
   }  
 
   static getStyles() {
