@@ -7,6 +7,7 @@ import { TopHoldersChecker } from './modules/TopHoldersChecker.mjs';
 import { PairTokenFinder } from './modules/PairTokenFinder.mjs';
 import { LPChecker } from './modules/LPChecker.mjs';
 import { LP1inchFinder } from './modules/LP1inchFinder.mjs';
+import { MalwareChecker } from './modules/MalwareChecker.mjs';
 
 export function registerModules(cs) {
   new ContractFinder(cs);
@@ -19,6 +20,8 @@ export function registerModules(cs) {
   //new LP1inchFinder(cs);
   new LPFactoryFinder(cs);
   
+  new MalwareChecker(cs);
+  
   let THF = new TopHoldersFinder(cs, false);
   return { THF };
 }
@@ -29,6 +32,7 @@ export function getAllStyles() {
    ...WhitelistChecker.getStyles(),
    ...TokenFinder.getStyles(),
    ...TopHoldersFinder.getStyles(),
-   ...TopHoldersChecker.getStyles()
+   ...TopHoldersChecker.getStyles(),
+   ...MalwareChecker.getStyles()
   ];
 }

@@ -135,7 +135,9 @@ export class TokenFinder extends Inspector {
 		    'shape': 'round-rectangle',		    
 		    'background-color': 'green',
 		    'content': 'data(name)',
-		    'text-valign': 'center'
+		    'text-valign': 'center',
+		    'font-size': '0.5em',
+		    'color': '#222244'
 		  }
 		},    
     		{
@@ -147,7 +149,9 @@ export class TokenFinder extends Inspector {
 		    'background-color': 'purple',
 		    'content': 'data(name)',
 		    'text-wrap': 'wrap',
-		    'text-valign': 'center'
+		    'text-valign': 'center',
+		    'color': '#222244',
+		    'font-size': '0.5em'
 		  }
 		},
                 {

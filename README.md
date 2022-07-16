@@ -34,7 +34,7 @@ Network graph based solution [for Blockchain forensics, malware detection and mo
 [x] Refactor Messages
 [x] Move node/edge style definitions into modules
 [x] Contract download solidity code
-[ ] Contract blockchain-malware checks (code, source, filenames)
+[x] Contract blockchain-malware checks
 [x] UX plumbing for Messaging and Scoring (improved)
 [x] UX plumbing for action panel (improved)
 [ ] Panel for BA and Contract with bscscan links
@@ -47,13 +47,14 @@ Network graph based solution [for Blockchain forensics, malware detection and mo
 [ ] Deployer discovery
 [ ] Discover Locks and Locked tokens
 [ ] Discover ICO 
-[ ] LPFactoryFinder: Multicall
-[ ] TokenFinder: Multicall
 ```
 
 ## Open Beta
 
 ```
+[ ] Contract blockchain-malware checks: source, filenames
+[ ] LPFactoryFinder: Multicall
+[ ] TokenFinder: Multicall
 [ ] Contract blacklist check
 [ ] Deployer blacklist check 
 [ ] Deployer sanity checks
