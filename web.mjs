@@ -191,6 +191,26 @@ document.addEventListener('DOMContentLoaded', function(){
 	     s = data.raw.type + ' ' + (typeof data.raw.val == 'object' ? JSON.stringify(data.raw.val) : data.raw.val);
 	   }
 	   
+	   let resolver = data.raw;
+	   let topic;
+	   
+	   if (resolver.type == 'TokenBEP20') { resolver = resolver.relative('is-token'); }
+	   //if (resolver.type == 'TokenAMM')   { resolver = resolver.relative('is-amm'); }
+	   if (resolver.type == 'Contract')   { resolver = resolver.relative('is-contract'); }
+	   if (resolver.type == "BlockchainAddress") { topic = resolver.val; }
+	   
+	   let msgs = window.cs.messages.filter( (x)=>{ return x.node == data.raw || x.topic == topic } );
+	   if (msgs.length > 0) {
+	     s += '<h3>Messages</h3>';
+	     for (let msg of msgs) {
+	        let color = 'black';
+                if (msg.score < 0) { color = 'red'; }
+                if (msg.score > 0) { color = 'green'; }
+    
+                s += '<p style="color: '+color+'"> '+msg.score+' '+msg.msg;
+	     }
+	   }
+	   
 	   s += '<p><table border=1><tr><th colspan=3>Relations</th></tr>'
 	   for (let r of window.cs.relations) {
 	     if (r.relation.substring(0,1) == '@') { continue; }
