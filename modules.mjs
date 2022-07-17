@@ -19,11 +19,10 @@ export function registerModules(cs) {
   
   //new LP1inchFinder(cs);
   new LPFactoryFinder(cs);
-  
+
   new MalwareChecker(cs);
-  
-  let THF = new TopHoldersFinder(cs, false);
-  return { THF };
+
+  new TopHoldersFinder(cs);
 }
 
 export function getAllStyles() {

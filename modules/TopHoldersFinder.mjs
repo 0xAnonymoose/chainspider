@@ -14,14 +14,12 @@ export class TopHoldersFinder extends Inspector {
       '0xe9e7cea3dedca5984780bafc599bd69add087d56'   // BUSD
     ];
     
-    if (doSubscribe) {
-      this.subscribe('Contract', 'is-token');
-    }
+    this.subscribe('TokenBEP20', '#Expand Top Holders');
   }
 
 
   async onRelation(r) {
-    let addr = r.src_node.relative('is-contract').val;
+    let addr = r.src_node.relative('is-token').relative('is-contract').val;
     if (this.auto_expand_exclude.indexOf(addr) > -1 || !this.auto_expand) { return; }
     
     let url = 'https://faas-tor1-70ca848e.doserverless.co/api/v1/web/fn-cac7949f-cce3-45ab-9d17-9285a0935f75/chainspider/getTopHolders?addr='+addr+'&top='+this.top; 
@@ -36,12 +34,12 @@ export class TopHoldersFinder extends Inspector {
     
     for (let holder of data) { 
         let n = this.cs.createNode('BlockchainAddress', holder.address);
-        this.cs.createRelation(n, 'holder', r.dst_node);
+        this.cs.createRelation(n, 'holder', r.src_node);
         
         //await new Promise(resolve => setTimeout(resolve, ANIMATE_DELAY));
     }
     
-    this.cs.createEvent( r.dst_node, '@holders-expanded' );
+    this.cs.createEvent( r.src_node, '@holders-expanded' );
     
   }
 

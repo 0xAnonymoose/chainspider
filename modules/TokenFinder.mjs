@@ -124,7 +124,7 @@ export class TokenFinder extends Inspector {
   }
   
   static panelBEP20(node) {
-    return `${node.val.name} (${node.val.symbol})<br>Supply: ${node.val.totalSupply}<br><input type=button value="Expand Top Holders" onClick=" window.expandTopHolders(${node._id}); ">`
+    return `${node.val.name} (${node.val.symbol})<br>Supply: ${node.val.totalSupply}<br>`
   }
   
   static panelAMM(node) {

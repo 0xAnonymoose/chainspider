@@ -145,21 +145,21 @@ document.addEventListener('DOMContentLoaded', function(){
 		elements: { nodes: [], edges: [] }
 	});
 	
-	window.expandTopHolders = function(id) {
-	  console.log('expanding', id);
-	  console.log(window.cs.nodes);
-	  
+	window.executeAction = function(id, type, action) {
+	
 	  let target_node;
 	  for (let node of window.cs.nodes) {
 	    if (node._id == id) { target_node = node; break; }
 	  }
 	  if (!target_node) { return; }
 	  
-	  let contract = target_node.relative('is-token');
-	  
-	  let r = new Relation(contract, 'is-token', target_node);
-	  console.log(r);
-	  window.actions.THF.onRelation(r);
+	  for (let sub of window.cs.subscriptions) {
+	    if (sub.type == type && sub.relation == action) {
+	      sub.inspector.onRelation( new Relation( target_node, action, true ) );
+	      break;
+	    }
+	  }	  
+	
 	}
 	
 	window.moveContext = function(id) {
@@ -189,6 +189,14 @@ document.addEventListener('DOMContentLoaded', function(){
 	     s = window.cs.panels[data.raw.type]( data.raw );
 	   } else {
 	     s = data.raw.type + ' ' + (typeof data.raw.val == 'object' ? JSON.stringify(data.raw.val) : data.raw.val);
+	   }
+	   
+	   let actions = window.cs.subscriptions.filter( (x)=>{ return x.type == data.raw.type } );
+	   if (actions.length > 0) {
+	     for (let action of actions) {
+	       if (action.relation.substring(0,1) != '#') { continue; }
+	       s += `<br><input type=button value="${action.relation.substring(1)}" onClick=" window.executeAction(${data.raw._id}, '${action.type}', '${action.relation}'); ">`;
+	     }
 	   }
 	   
 	   let resolver = data.raw;
