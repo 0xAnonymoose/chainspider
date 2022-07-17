@@ -271,7 +271,11 @@ document.addEventListener('DOMContentLoaded', function(){
 	var actions = window.actions = registerModules(cs);
 
 	function onStartClick(e) {
-	  cs.createNode('BlockchainAddress', document.getElementById('addr').value);
+	  let addr = document.getElementById('addr').value;
+	  addr = addr.toLowerCase();
+	  document.getElementById('addr').value = addr;
+	  
+	  cs.createNode('BlockchainAddress', addr);
 	}
 	document.onStartClick = onStartClick;
 	
