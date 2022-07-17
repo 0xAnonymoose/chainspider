@@ -6,7 +6,7 @@
     "dev": "npx parcel index.html",
     "build": "npx parcel build --no-scope-hoist --no-source-maps index.html"
   },
-  "browserslist": "> 0.5%, last 2 versions, not dead",  
+  "browserslist": "> 0.5%, last 2 versions, not dead",
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -24,6 +24,7 @@
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
     "querystring-es3": "^0.2.1",
+    "sharp": "^0.29.3",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "url": "^0.11.0"
