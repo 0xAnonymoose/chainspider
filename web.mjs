@@ -54,11 +54,6 @@ class ChainSpiderWeb extends ChainSpider {
     if (data.logoURI) { data.logoURI = proxyUrl(data.logoURI); }
     
     this.pushChange( { group: 'nodes', data } );
-    //window.updateLayout();
-    
-    if (node.type == 'TokenBEP20') {
-      //document.getElementById('messages').innerHTML += '<p>BEP20 detected '+node.val.name; 
-    }
 
   }
   
@@ -68,18 +63,13 @@ class ChainSpiderWeb extends ChainSpider {
     // event?
     if (relation.dst_node != true) {
       this.pushChange( { group: 'edges', data: { id: 'e'+relation._id, source: 'n'+relation.src_node._id, target: 'n'+relation.dst_node._id, relation: relation.relation } } );
-      //window.updateLayout();
     }
     
-    if (relation.relation == 'is-whitelisted') {
-      //document.getElementById('messages').innerHTML += '<p>'+relation.src_node.val.name+' is in the '+relation.dst_node.val.platform+' whitelist!';
-      //document.getElementById('messages').innerHTML += '<img src='+relation.dst_node.val.logoURI+'>';
-    }
-
   }
   
   onMessage(msg) {
     super.onMessage(msg);
+    
     let contextAddr = document.getElementById('addr').value;
     let s = '';
     let score = 0;

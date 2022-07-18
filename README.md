@@ -52,11 +52,10 @@ Network graph based solution [for Blockchain forensics, malware detection and mo
 ## Open Beta
 
 ```
+[ ] TokenAMM panel: trade now buttons for ape, bi, baby and cakeswaps
 [ ] Contract blockchain-malware checks: source, filenames
 [ ] LPFactoryFinder: Multicall
 [ ] TokenFinder: Multicall
-[ ] Contract blacklist check
-[ ] Deployer blacklist check 
 [ ] Deployer sanity checks
 [ ] Deployer panel: expand all contracts
 [ ] Lock checks
@@ -72,6 +71,9 @@ Network graph based solution [for Blockchain forensics, malware detection and mo
 [ ] UX to delete nodes
 [ ] User-provided names for BlockchainAddress
 [ ] Discover bscscan names for BlockchainAddress
+[ ] CoinMarketCap API integration
+[ ] Contract blacklist check
+[ ] Deployer blacklist check 
 ```
 
 ## Launch
