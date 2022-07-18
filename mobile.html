@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+    <title>ChainSpider Mobile</title>
+  </head>
+  <body>
+
+    <!-- Main -->
+    <main class="container">
+      <article class="grid">
+        <div>
+          <hgroup>
+            <h1><img src="icons/spiderweb.png?height=32">&nbsp;ChainSpider Mobile</h1>
+          </hgroup>
+     
+          <section id="form">
+            <form>
+              <input type="search" id="addr" name="addr" placeholder="BSC Contract Address">
+              <button class="outline" onClick='document.onStartClick()'>Scan</button>
+            </form>
+          </section>
+        </div>
+      </article>
+      
+      <article>
+      <section id="accordions">
+        Enter a contract address above and tap Scan to start.
+        <!--
+        <details>
+          <summary>Accordion 1</summary>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque urna diam, tincidunt nec porta sed, auctor id velit. Etiam venenatis nisl ut orci consequat, vitae tempus quam commodo. Nulla non mauris ipsum. Aliquam eu posuere orci. Nulla convallis lectus rutrum quam hendrerit, in facilisis elit sollicitudin. Mauris pulvinar pulvinar mi, dictum tristique elit auctor quis. Maecenas ac ipsum ultrices, porta turpis sit amet, congue turpis.</p>
+        </details>
+        <details open>
+          <summary>Accordion 2</summary>
+          <ul>
+            <li>Vestibulum id elit quis massa interdum sodales.</li>
+            <li>Nunc quis eros vel odio pretium tincidunt nec quis neque.</li>
+            <li>Quisque sed eros non eros ornare elementum.</li>
+            <li>Cras sed libero aliquet, porta dolor quis, dapibus ipsum.</li>
+          </ul>
+        </details>
+      -->
+      </section>
+      </article>
+    
+    </main>
+    
+    <script type="module">
+      import { ChainSpider, Relation } from './chainspider.mjs';
+      import { registerModules } from './modules.mjs';
+      
+      class ChainSpiderMobile extends ChainSpider {
+      
+        onMessage(msg) {
+	    super.onMessage(msg);
+	    
+	    let contextAddr = document.getElementById('addr').value;
+	    let s = '';
+	    let o = '';
+	    let score = 0;
+	    let nodes = {};
+	    
+	    for (let node of this.nodes) {
+	      if (node.type == "TokenBEP20") {
+	        nodes[node._id] = { "summary": `Token ${node.val.name} (${node.val.symbol})`, "messages": [this.panels["TokenBEP20"](node)] };
+	      }
+	      if (node.type == "TokenAMM") {
+	        nodes[node._id] = { "summary": `${node.val.name}`, "messages": [this.panels["TokenAMM"](node)] };
+	      }
+	      if (node.type == "WhitelistedToken") {
+	        nodes[node._id] = { "summary": `CoinMarketCap`, "messages": [this.panels["WhitelistedToken"](node)] };	      
+	      }
+	      if (node.type == "MalwareReport") {
+	        nodes[node._id] = { "summary": `Malware Scan`, "messages": [this.panels["MalwareReport"](node)] };	      
+	      }	      
+	    }
+	    
+	    for (let msg of this.messages) {
+	  
+	      if (msg.topic != contextAddr) { continue; }
+	      
+	      let n = msg.node;
+	    
+	      let color = 'black';
+	      if (msg.score < 0) { color = 'red'; }
+	      if (msg.score > 0) { color = 'green'; }
+	    
+	      s = '<p style="color: '+color+'"> '+msg.msg;
+	      //o += s;
+	      console.log(nodes[n._id]);
+	      if (nodes[n._id] !== undefined) { nodes[n._id].messages.push(s); } else { o += s; }
+	    
+	      score += msg.score;
+	    }
+	    
+	    s='';
+	    for (let idx of Object.keys(nodes)) {
+	      let n = nodes[idx];
+	      s += '<details open><summary>'+n.summary+'</summary>'+n.messages+'</details>'
+	      //console.log(s);
+	    }
+	    
+	    let scolor = 'black';
+	    let snote = '';
+	    if (score <= -100) { snote='SCAM'; scolor='red'; }
+	    if (score >= 100) { snote='OK!'; scolor='green'; }
+	    let n = '<h3 style="color: '+scolor+'">Score '+score+" "+snote+'</h3>'
+	    
+	    document.getElementById('accordions').innerHTML = o+n+s;
+	  }
+  
+      }
+      
+      function onStartClick(e) {
+	  let addr = document.getElementById('addr').value;
+	  addr = addr.toLowerCase();
+	  document.getElementById('addr').value = addr;
+	  
+          var cs = window.cs = new ChainSpiderMobile();
+          registerModules(cs);  
+	  cs.createNode('BlockchainAddress', addr);
+      }
+      document.onStartClick = onStartClick;
+	
+	const params = new URLSearchParams(window.location.search);
+        const addr = params.get("addr");
+        if (addr) {
+          document.getElementById('addr').value = addr;
+          document.onStartClick();
+        }
+        
+    </script>
+  </body>
+</html>
