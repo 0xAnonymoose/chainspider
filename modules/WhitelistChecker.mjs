@@ -14,8 +14,14 @@ export class WhitelistChecker extends Inspector {
   
   async onRelation(r) {
     let addr = r.src_node.relative('is-contract').val;
-    let res = await fetch(proxyUrl('https://github.com/pancakeswap/token-list/raw/main/src/tokens/cmc.json'));
-    let tokens = await res.json();
+    let tokens;
+    try { 
+      let res = await fetch(proxyUrl('https://github.com/pancakeswap/token-list/raw/main/src/tokens/cmc.json'));
+      tokens = await res.json();
+    } catch(e) {
+      console.error('Failed to load whitelist', e);
+      return;
+    }
     
     let { symbol, name } = r.dst_node.val;
     let match = false;
@@ -52,9 +58,9 @@ export class WhitelistChecker extends Inspector {
 
   static panelWhitelist(node) {
     if (node.val.status == 'found') {
-      return `<h2>${node.val.status} in ${node.val.platform} whitelist</h2><img src=${node.val.logoURI}>`;
+      return `<h2>This token was found in ${node.val.platform} whitelist</h2><img src=${node.val.logoURI}>`;
     } else if (node.val.status == 'not-found') {
-      return `<h2>${node.val.status} in ${node.val.platform} whitelist</h2>`;
+      return `<h2>This token was not found in ${node.val.platform} whitelist</h2>`;
     } else if (node.val.status == 'fake') {
       return `<h2>${node.val.status} is a FAKE of ${node.val.fake}</h2>`
     }

@@ -13,23 +13,25 @@
     <main class="container">
       <article class="grid">
         <div>
-          <hgroup>
-            <h1><img src="../icons/spiderweb.png?height=32">&nbsp;ChainSpider Mobile</h1>
-          </hgroup>
-     
+    
           <section id="form">
-            <form>
+            <hgroup>
+              <h1><img src="../icons/spiderweb.png?height=32">&nbsp;ChainSpider Mobile&nbsp;<sup>20220719</sup></h1>
+            </hgroup>
+          
+
               <input type="search" id="addr" name="addr" placeholder="BSC Contract Address">
               <button class="outline" onClick='document.onStartClick()'>Scan</button>
-            </form>
+ 
           </section>
-        </div>
-      </article>
-      
-      <article>
+
+          <section id="progress">
+          </section>
+
       <section id="accordions">
         Enter a contract address above and tap Scan to start.
       </section>
+
       </article>
     
     </main>
@@ -40,6 +42,38 @@
       
       class ChainSpiderMobile extends ChainSpider {
       
+        constructor() {
+            super();
+            
+            this.active = {};
+        }
+        
+        onSubscriptionStart(sub, relation, id) {
+            this.active[id] = {sub, relation};
+            this.updateProgress();
+        }
+        
+        onSubscriptionEnd(sub, relation, id) {
+            delete this.active[id];
+            console.log(this.active);
+            this.updateProgress();
+        }
+        
+        updateProgress() {
+            let running = Object.keys(this.active);
+            let s = '';
+            
+            if (running.length > 0) {
+              s = '<progress id="progress-2"></progress>';
+            }
+            
+            for (let id of running) {
+              s += '<button class="secondary outline">'+this.active[id].sub.toString()+' '+this.active[id].relation.src_node.toString()+'</button>';
+            }
+            
+            document.getElementById('progress').innerHTML = s;
+        }
+        
         onMessage(msg) {
 	    super.onMessage(msg);
 	    
@@ -85,15 +119,15 @@
 	    s='';
 	    for (let idx of Object.keys(nodes)) {
 	      let n = nodes[idx];
-	      s += '<details open><summary>'+n.summary+'</summary>'+n.messages+'</details>'
-	      //console.log(s);
+	      s += '<details open><summary>'+n.summary+'</summary>'+n.messages.join('')+'</details>'
+	      console.log(s);
 	    }
 	    
-	    let scolor = 'black';
-	    let snote = '';
+	    let scolor = 'purple';
+	    let snote = 'WARNING';
 	    if (score <= -100) { snote='SCAM'; scolor='red'; }
-	    if (score >= 100) { snote='OK!'; scolor='green'; }
-	    let n = '<h3 style="color: '+scolor+'">Score '+score+" "+snote+'</h3>'
+	    if (score >= 100) { snote='PASS'; scolor='green'; }
+	    let n = '<h1 style="color: '+scolor+'; text-align:center">Score '+score+" "+snote+'</h1>'
 	    
 	    document.getElementById('accordions').innerHTML = o+n+s;
 	  }

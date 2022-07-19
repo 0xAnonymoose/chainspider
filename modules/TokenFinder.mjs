@@ -87,7 +87,7 @@ export class TokenFinder extends Inspector {
       }
       
       let name = asset_name+'/'+base_name+'\n'+symbol;
-      let t = this.cs.createNode('TokenAMM', { asset: asset.toLowerCase(), base: base.toLowerCase(), name, asset_name, base_name, asset_reserve, base_reserve, asset_is_zero });
+      let t = this.cs.createNode('TokenAMM', { addr, asset: asset.toLowerCase(), base: base.toLowerCase(), name, asset_name, base_name, asset_reserve, base_reserve, asset_is_zero });
       this.cs.createRelation(r.dst_node, 'is-amm', t);
       
       let a = this.cs.createNode('BlockchainAddress', asset.toLowerCase());     
@@ -108,7 +108,7 @@ export class TokenFinder extends Inspector {
     let info;
     try {
       info = {
-        //contractAddress: addr,
+        addr,
         totalSupply: await token_abi.methods.totalSupply().call(),
         symbol,
         name: await token_abi.methods.name().call(),
@@ -124,7 +124,8 @@ export class TokenFinder extends Inspector {
   }
   
   static panelBEP20(node) {
-    return `${node.val.name} (${node.val.symbol})<br>Supply: ${node.val.totalSupply}<br>`
+    let supply = BigInt(node.val.totalSupply)/BigInt(10**node.val.decimals);
+    return `<h2>Token ${node.val.name}</h2> ${node.val.name} (${node.val.symbol})<br>Supply: ${supply.toString()}<br>`
   }
   
   static panelAMM(node) {

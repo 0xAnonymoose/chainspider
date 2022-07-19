@@ -121,6 +121,8 @@ export class ChainSpider {
     this.subscriptions = [];
     this.messages = [];
     this.panels = {};
+    
+    this.subExecuteCounter = 0;
   }
 
   createNode(type, val) {
@@ -164,8 +166,10 @@ export class ChainSpider {
     // fire subscriptions
     for (let s of this.subscriptions) {
       if (s.type == src_node.type && s.relation == r.relation) {
-         this.onSubscriptionStart(s, r);
-         s.inspector.onRelation(r).then( ()=>{ this.onSubscriptionEnd(s,r); } );
+         this.onSubscriptionStart(s, r, this.subExecuteCounter);
+         let c = this.subExecuteCounter;
+         s.inspector.onRelation(r).then( ()=>{ this.onSubscriptionEnd(s,r, c); } );
+         this.subExecuteCounter++;
       }
     }
     
@@ -207,12 +211,12 @@ export class ChainSpider {
     console.log('<Message:'+msg.topic+'>', msg.score, msg.topic, msg.msg);  
   }
   
-  onSubscriptionStart(sub, relation) {
-    console.log('<Run>', sub.toString(), 'on', relation.src_node.toString());
+  onSubscriptionStart(sub, relation, id) {
+    console.log('<Run:'+id+'>', sub.toString(), 'on', relation.src_node.toString());
   }
   
-  onSubscriptionEnd(sub, relation) {
-    console.log('<Done>', sub.toString(), 'on', relation.src_node.toString());
+  onSubscriptionEnd(sub, relation, id) {
+    console.log('<Done:'+id+'>', sub.toString(), 'on', relation.src_node.toString());
   }
    
 }

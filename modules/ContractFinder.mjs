@@ -28,13 +28,13 @@ export class ContractFinder extends Inspector {
       } catch(e) {
          if(data) { source = data.message; }
       }
-         
-      if (source == null) {
-        this.cs.reportMessage(this.id, addr, -5, 'Failed to get solidity code from BSCScan');
-      }
-      
-      let c = this.cs.createNode('Contract', { code, source } );
+              
+      let c = this.cs.createNode('Contract', { addr, code, source } );
       this.cs.createRelation(r.src_node, 'is-contract', c);
+
+      if (source == null) {
+        this.cs.reportMessage(this.id, addr, -5, 'Failed to get solidity code from BSCScan', c);
+      }
     }
     
   }
