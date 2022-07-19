@@ -1,6 +1,59 @@
 # chainspider
 
-Network graph based solution [for Blockchain forensics, malware detection and more.
+ChainSpider is a knowledge graph-based solution for Blockchain forensics, malware detection and more.
+
+# Concepts
+
+## Node
+
+Nodes have a type and a value, are used to represent data in the knowledge graph.
+
+## Relationship
+
+Relationships have a source node, destination node and a relation.  They represent links between Nodes.
+
+## Inspector
+
+Inspectors subscribe to Node and/or Relationship creation events, consult some data sources and create more Nodes and Relationships to expand the knowledge graph.
+
+### Actions
+
+A special kind of subscription called an Action is one that's explicitly triggered by the user instead of by another event in the system.
+
+### Panels
+
+Panels are functions that render an HTML representation of a Node.
+
+### Styles
+
+Styles are functions that return CytoscapeJS style representations of Nodes and Edges.
+
+## Messages
+
+An inspector can emit a Message which is optionaly attached to a node.  The message has a score, which when signed negative indicates the message represents something bad and positive when the message represents something good.
+
+### Total Score
+
+The sum of scores from all messages is called the Total Score and represents the "sentiment" of the analysis: large positive values indicate confidence the token is good, while large negative mean red flags were identified.
+
+# Modules (Inspectors)
+
+| Module | Subscriptions | Outputs | Notes |
+|--------|---------------|---------|-------|
+|ContractFinder|BA @on-create|BA is-contract, Contract|Checks BA for Code segments, downloads source from BSCScan|
+
+TODO
+
+
+# Frontends
+
+Three frontends are implemented in this repository.
+
+## CLI
+
+## Desktop (CytoscapeJS)
+
+## Mobile (PicoCSS)
 
 # Roadmap
 
@@ -44,6 +97,7 @@ Network graph based solution [for Blockchain forensics, malware detection and mo
 [x] Panel: highlight active node
 [x] Whitelist: Refactor to always output a report, add icons
 [ ] Panel for BA and Contract with bscscan links
+[ ] Whitelist: panel add buttons for other scanners whentoken passes
 [ ] Deployer discovery
 [ ] Discover Locks and Locked tokens
 [ ] Discover ICO 
