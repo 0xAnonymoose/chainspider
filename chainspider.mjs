@@ -107,6 +107,10 @@ class Subscription {
     this.type = type;
     this.relation = relation;
   }
+  
+  toString() {
+    return `${this.inspector.id}:${this.type}`;
+  }
 }
 
 export class ChainSpider {
@@ -160,7 +164,8 @@ export class ChainSpider {
     // fire subscriptions
     for (let s of this.subscriptions) {
       if (s.type == src_node.type && s.relation == r.relation) {
-         s.inspector.onRelation(r);
+         this.onSubscriptionStart(s, r);
+         s.inspector.onRelation(r).then( ()=>{ this.onSubscriptionEnd(s,r); } );
       }
     }
     
@@ -200,6 +205,14 @@ export class ChainSpider {
   
   onMessage(msg) {
     console.log('<Message:'+msg.topic+'>', msg.score, msg.topic, msg.msg);  
+  }
+  
+  onSubscriptionStart(sub, relation) {
+    console.log('<Run>', sub.toString(), 'on', relation.src_node.toString());
+  }
+  
+  onSubscriptionEnd(sub, relation) {
+    console.log('<Done>', sub.toString(), 'on', relation.src_node.toString());
   }
    
 }

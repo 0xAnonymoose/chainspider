@@ -1,5 +1,99 @@
-import { ChainSpider, Relation } from './chainspider.mjs';
-import { registerModules, getAllStyles } from './modules.mjs';
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>ChainSpider Desktop</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.5.0/bluebird.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.min.js"></script>
+    <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+   
+
+<style>
+	body {
+		font-family: helvetica neue, helvetica, liberation sans, arial, sans-serif;
+		font-size: 14px;
+	}
+
+	#cy {
+		width: 100%;
+		height: 75%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 100;
+	}
+
+	h1 {
+		opacity: 0.5;
+		font-size: 1em;
+		font-weight: bold;
+	}
+	
+	#messages {
+	         width: 300;
+	         height: 200;
+	         position: absolute;
+	         top: 100;
+	         left: 0;
+	         z-index: 200;
+	}
+	
+	#controls {
+	         position: absolute;
+	         top: 0;
+	         left: 0;
+	         z-index: 300;
+	         padding: 5px;
+	         margin: 3px;
+	         border: solid 1px black;
+	}
+	
+	#panel {
+	    position: absolute;
+	    right: 0;
+	    top: 75%;
+	    height: 25%;
+	    width: 100%;
+	    background-color: #eeeeee;
+	    z-index: 300;
+	    overflow-y: scroll;
+	    overflow-x: auto;
+	}
+	
+	#version {
+	    position: absolute;
+	    top: 2px;
+	    right: 2px;
+	    line-height: 32px;
+	    z-index: 300;
+        }
+
+</style>
+    
+  </head>
+  <body>
+    
+    <div id='controls'>
+    <h1>ChainSpider</h1>
+    <form>
+      Contract: <input type="text" value="" size=40 id="addr"> <input type=button onClick='document.onStartClick()' value='Start'>
+    </form>
+    </div>
+    
+    <div width=800 height=400 id='messages'>
+    
+    </div>
+    
+    <div id=cy></div>
+    
+    <div id=panel>Enter a BSC token contract address and click Start, then click on any item in the research graph.</div>
+    
+    <div id=version>cs-20220718&nbsp;<a href="/mobile/"><img src="../icons/spiderweb.png?width=32"></a></div>
+  
+    <script type="module">
+import { ChainSpider, Relation } from '../chainspider.mjs';
+import { registerModules, getAllStyles } from '../modules.mjs';
 import klay  from 'cytoscape-klay';
 
 function proxyUrl(url) {
@@ -100,7 +194,7 @@ class ChainSpiderWeb extends ChainSpider {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function(){
+   document.addEventListener('DOMContentLoaded', function(){
        
 	var cy = window.cy = cytoscape({
 		container: document.getElementById('cy'),
@@ -276,5 +370,9 @@ document.addEventListener('DOMContentLoaded', function(){
           document.onStartClick();
         }
 
-});
+    });
 
+    </script>
+      
+  </body>
+</html>

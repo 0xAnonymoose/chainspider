@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "npx parcel index.html",
-    "build": "npx parcel build --no-scope-hoist --no-source-maps index.html"
+    "dev": "npx parcel desktop/index.html",
+    "build": "npx parcel build --no-scope-hoist --no-source-maps desktop/index.html"
   },
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "author": "",
