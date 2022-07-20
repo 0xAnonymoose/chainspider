@@ -90,6 +90,14 @@
     <div id=panel>Enter a BSC token contract address and click Start, then click on any item in the research graph.</div>
     
     <div id=version>cs-20220718&nbsp;<a href="/mobile/"><img src="../icons/spiderweb.png?width=32"></a></div>
+    
+    <script type="module">
+      import Banana from 'banana-i18n';
+      import lang_en from '../i18n/en.json';      
+      
+      const banana = window.banana = new Banana('en');
+      banana.load(lang_en, 'en');
+   </script>
   
     <script type="module">
 import { ChainSpider, Relation } from '../chainspider.mjs';
@@ -102,7 +110,7 @@ function proxyUrl(url) {
 
 class ChainSpiderWeb extends ChainSpider {
   constructor() {
-    super();
+    super(banana);
     
     this.animq = [];
     this.animating = false;

@@ -17,5 +17,8 @@
     "chainspider-heading-token": "Token $1 ($2)",
     "chainspider-heading-amm": "$1",
     "chainspider-heading-whitelist": "CoinMarketCap",
-    "chainspider-heading-malware": "Malware Scan"
+    "chainspider-heading-malware": "Malware Scan",
+    
+    "chainspider-lpchecker-high-asset": "$1 has $2% of asset supply, has possibly been rugged.'",
+    "chainspider-lpchecker-low-liquidity": "$1 has very low liquidity, do not trade with it."
 }

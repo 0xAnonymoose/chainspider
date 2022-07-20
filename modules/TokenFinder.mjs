@@ -126,11 +126,11 @@ export class TokenFinder extends Inspector {
   
   static panelBEP20(node) {
     let supply = BigInt(node.val.totalSupply)/BigInt(10**node.val.decimals);
-    return `<h2>Token ${node.val.name}</h2> ${node.val.name} (${node.val.symbol})<br>Supply: ${supply.toString()}<br>`
+    return `<h2>Token ${node.val.name}</h2> ${node.val.name} (${node.val.symbol})<br>Supply: ${supply.toLocaleString()}<br>`
   }
   
   static panelAMM(node) {
-    return `<h2>${node.val.name}</h2>Asset: ${node.val.asset_reserve} ${node.val.asset_name}<br>Base: ${node.val.base_reserve} ${node.val.base_name}`;
+    return `<h2>${node.val.name}</h2>Asset: ${node.val.asset_reserve.toLocaleString()} ${node.val.asset_name}<br>Base: ${node.val.base_reserve.toLocaleString()} ${node.val.base_name}`;
   }  
 
   static getStyles() {

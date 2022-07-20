@@ -26,11 +26,11 @@ export class LPChecker extends Inspector {
     console.log(asset_ratio, base_name, base_reserve);
     
     if (asset_ratio > 100.0) {
-      this.cs.reportMessage(this.id, asset, -100, r.dst_node.val.name+' has '+asset_ratio.toFixed(0)+'% of asset supply, has likely been rugged.', r.dst_node);
+      this.cs.reportMessage(this.id, asset, -100, this.cs.banana.i18n('chainspider-lpchecker-high-asset', r.dst_node.val.name, asset_ratio.toLocaleString()), r.dst_node);
     }
         
     if ( (base_name == 'WBNB' && base_reserve < 5) || (base_name == 'BUSD' && base_reserve < 1000) ) {
-      this.cs.reportMessage(this.id, asset, -10, r.dst_node.val.name+' has very low liquidity, do not trade with it.', r.dst_node);
+      this.cs.reportMessage(this.id, asset, -10, this.cs.banana.i18n('chainspider-lpchecker-low-liquidity', r.dst_node.val.name), r.dst_node);
     }
     
     //console.log(this.id, assetReserve, baseReserve, assetSupply, asset_ratio);

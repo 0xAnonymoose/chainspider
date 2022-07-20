@@ -115,7 +115,7 @@ class Subscription {
 
 export class ChainSpider {
 
-  constructor() {
+  constructor(banana = null) {
     this.nodes = [];
     this.relations = [];
     this.subscriptions = [];
@@ -123,6 +123,8 @@ export class ChainSpider {
     this.panels = {};
     
     this.subExecuteCounter = 0;
+    
+    this.banana = banana;
   }
 
   createNode(type, val) {
