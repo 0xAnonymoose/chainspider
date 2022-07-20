@@ -1,0 +1,34 @@
+{
+    "@metadata": {
+        "authors": [
+            "Anonymoose"
+        ]
+    },
+    "chainspider-mobile-title": "ChainSpider Mobile",
+    "chainspider-desktop-title": "ChainSpider Desktop",
+    "chainspider-version": "$1",
+    "chainspider-mobile-placeholder": "BSC Contract Address",
+    "chainspider-mobile-scan": "Scan",
+    "chainspider-mobile-welcome": "Enter a contract address above and tap Scan to start.",
+           
+    "chainspider-score-scam": "Score $1 - DEFINITE SCAM!",
+    "chainspider-score-good": "Score $1 - GOOD!",
+    "chainspider-score-unknown": "Score $1 - WARNING (RESEARCH MORE)",
+    
+    "chainspider-heading-token": "Token $1 ($2)",
+    "chainspider-heading-amm": "$1",
+    "chainspider-heading-whitelist": "CoinMarketCap",
+    "chainspider-heading-malware": "Malware Scan",
+    "chainspider-heading-ico": "PinkSale ICO",
+    
+    "chainspider-lpchecker-high-asset": "$1 has $2% of asset supply, has possibly been rugged.",
+    "chainspider-lpchecker-low-liquidity": "$1 has very low liquidity, do not trade with it.",
+    
+    "chainspider-whitelist-found": "Token $1 was found in $2 whitelist.",
+    "chainspider-whitelist-not-found": "Token $1 was not found in $2 whitelist.",
+    "chainspider-whitelist-fake": "Token $1 is a fake of $2.",
+    "chainspider-whitelist-fake-addr": "Token attempting to fake $1, but contract address is incorrect.",
+    "chainspider-whitelist-fake-symbol": "Token attempting to fake $1, but symbol is incorrect.",
+    
+    "chainspider-pinksale-found": "Token $1 had a PinkSale ICO."
+}
