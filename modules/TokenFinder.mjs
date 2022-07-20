@@ -121,12 +121,12 @@ export class TokenFinder extends Inspector {
     }
 
     let t = this.cs.createNode('TokenBEP20', info);
-    this.cs.createRelation(r.dst_node, 'is-token', t);    
+    this.cs.createRelation(r.dst_node, 'is-token', t);
   }
   
   static panelBEP20(node) {
     let supply = BigInt(node.val.totalSupply)/BigInt(10**node.val.decimals);
-    return `<h2>Token ${node.val.name}</h2> ${node.val.name} (${node.val.symbol})<br>Supply: ${supply.toLocaleString()}<br>`
+    return `<h2>Token ${node.val.name}</h2> ${node.val.name} (${node.val.symbol})<br>Address: ${node.val.addr}<br>Supply: ${supply.toLocaleString()}<br>`
   }
   
   static panelAMM(node) {
