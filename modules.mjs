@@ -8,6 +8,7 @@ import { PairTokenFinder } from './modules/PairTokenFinder.mjs';
 import { LPChecker } from './modules/LPChecker.mjs';
 import { LP1inchFinder } from './modules/LP1inchFinder.mjs';
 import { MalwareChecker } from './modules/MalwareChecker.mjs';
+import { BscScanTools } from './modules/BscScanTools.mjs';
 
 export function registerModules(cs) {
   new ContractFinder(cs);
@@ -22,7 +23,9 @@ export function registerModules(cs) {
 
   new MalwareChecker(cs);
 
+  // actions
   new TopHoldersFinder(cs);
+  new BscScanTools(cs);
 }
 
 export function getAllStyles() {

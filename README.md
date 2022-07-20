@@ -96,8 +96,8 @@ Three frontends are implemented in this repository.
 [x] Panel: hyperlinks to Relation endpoints
 [x] Panel: highlight active node
 [x] Whitelist: Refactor to always output a report, add icons
-[ ] Panel for BA and Contract with bscscan links
-[ ] Whitelist: panel add buttons for other scanners whentoken passes
+[x] Panel for BA and Contract with bscscan links
+[ ] Whitelist: panel add buttons for other scanners when token passes
 [ ] Deployer discovery
 [ ] Discover Locks and Locked tokens
 [ ] Discover ICO 
