@@ -1,6 +1,7 @@
 import { Inspector } from '../chainspider.mjs';
 import { bep20, pancakeLP } from '../lib/abi.mjs';
 import web3 from '../blockchain.mjs';
+import xss from 'xss';
 
 export class TokenFinder extends Inspector {
   constructor(cs) { 
@@ -25,7 +26,7 @@ export class TokenFinder extends Inspector {
     
     let symbol;
     try {
-      symbol = await token_abi.methods.symbol().call();
+      symbol = xss(await token_abi.methods.symbol().call());
     } catch(err) {
       console.error(this.id, 'error', err);
       return;
@@ -75,8 +76,8 @@ export class TokenFinder extends Inspector {
         const asset_abi = await new web3.eth.Contract( bep20, asset );
         const base_abi = await new web3.eth.Contract( bep20, base );
         
-        asset_name = await asset_abi.methods.symbol().call();
-        base_name = await base_abi.methods.symbol().call();
+        asset_name = xss(await asset_abi.methods.symbol().call());
+        base_name = xss(await base_abi.methods.symbol().call());
         
         asset_reserve = bigToFloat(reserves[asset_is_zero?0:1], await asset_abi.methods.decimals().call());
         base_reserve = bigToFloat(reserves[asset_is_zero?1:0], await base_abi.methods.decimals().call());
@@ -109,10 +110,10 @@ export class TokenFinder extends Inspector {
     try {
       info = {
         addr,
-        totalSupply: await token_abi.methods.totalSupply().call(),
+        totalSupply: xss(await token_abi.methods.totalSupply().call()),
         symbol,
-        name: await token_abi.methods.name().call(),
-        decimals: await token_abi.methods.decimals().call()
+        name: xss(await token_abi.methods.name().call()),
+        decimals: parseInt(await token_abi.methods.decimals().call())
       }
     } catch(err) {
       console.error(this.id, 'error', err);
