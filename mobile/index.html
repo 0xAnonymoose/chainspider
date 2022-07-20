@@ -30,6 +30,8 @@
     </main>
     
     <script type="module">
+      const _version = '20220720';
+      
       import Banana from 'banana-i18n';
       import lang_en from '../i18n/en.json';      
       
@@ -44,7 +46,7 @@
    
             <hgroup>
               <div id="logo"></div>
-              <h1>${banana.i18n('chainspider-mobile-title')}<sup>${banana.i18n('chainspider-mobile-version', '20220720')}</sup></h1>
+              <h1>${banana.i18n('chainspider-mobile-title')}<sup>${banana.i18n('chainspider-mobile-version', _version)}</sup></h1>
             </hgroup>
           
             <input type="search" id="addr" name="addr" placeholder="${banana.i18n('chainspider-mobile-placeholder')}">
