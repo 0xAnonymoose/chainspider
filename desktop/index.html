@@ -224,14 +224,15 @@ class ChainSpiderWeb extends ChainSpider {
 		    "target-arrow-shape": "vee"
 		  }
 		},
+		...getAllStyles(),
+		/* context has to come last to be able to override borders */
 		{
 		  selector: '.context',
 		  style: {
 		    'border-width': '4px',
 		    'border-color': 'red'
 		  }
-		},
-		...getAllStyles()			
+		}					
 	        ],
 
 		elements: { nodes: [], edges: [] }
