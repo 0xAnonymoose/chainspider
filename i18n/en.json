@@ -20,5 +20,11 @@
     "chainspider-heading-malware": "Malware Scan",
     
     "chainspider-lpchecker-high-asset": "$1 has $2% of asset supply, has possibly been rugged.'",
-    "chainspider-lpchecker-low-liquidity": "$1 has very low liquidity, do not trade with it."
+    "chainspider-lpchecker-low-liquidity": "$1 has very low liquidity, do not trade with it.",
+    
+    "chainspider-whitelist-found": "Token $1 was found in $2 whitelist.",
+    "chainspider-whitelist-not-found": "Token $1 was not found in $2 whitelist.",
+    "chainspider-whitelist-fake": "Token $1 is a fake of $2.",
+    "chainspider-whitelist-fake-addr": "Token attempting to fake $1, but contract address is incorrect.",
+    "chainspider-whitelist-fake-symbol": "Token attempting to fake $1, but symbol is incorrect."
 }

@@ -9,7 +9,7 @@ export class WhitelistChecker extends Inspector {
   constructor(cs) { 
     super(cs, 'WhitelistChecker');
     this.subscribe('Contract', 'is-token');
-    this.panel('WhitelistedToken', WhitelistChecker.panelWhitelist);
+    this.panel('WhitelistedToken', this.panelWhitelist.bind(this));
   }
   
   async onRelation(r) {
@@ -25,21 +25,22 @@ export class WhitelistChecker extends Inspector {
     
     let { symbol, name } = r.dst_node.val;
     let match = false;
+    console.log(name);
     for (let wt of tokens) {
       let wtaddr = wt.address.toLowerCase();
       let w;
       
       if (wt.name == name && wt.symbol == symbol) {
         if (wtaddr == addr) {
-          w = this.cs.createNode( 'WhitelistedToken', { 'status': 'found', 'platform': 'cmc', 'logoURI': wt.logoURI });
-          this.cs.reportMessage( this.id, addr, 100, 'Token '+name+' was found in the CoinMarketCap whitelist.', w );
+          w = this.cs.createNode( 'WhitelistedToken', { 'status': 'found', 'platform': 'cmc', 'logoURI': wt.logoURI, symbol, name });
+          this.cs.reportMessage( this.id, addr, 100, this.cs.banana.i18n('chainspider-whitelist-found', name, 'cmc') , w );
         } else {
-          w = this.cs.createNode( 'WhitelistedToken', { 'status': 'fake', 'platform': 'cmc', 'fake': wt.name });
-          this.cs.reportMessage( this.id, addr, -100, 'Token attempting to impersonate ' + wt.name + ' but contract address is incorrect', w );
+          w = this.cs.createNode( 'WhitelistedToken', { 'status': 'fake', 'platform': 'cmc', 'fake': wt.name, symbol, name });
+          this.cs.reportMessage( this.id, addr, -100, this.cs.banana.i18n('chainspider-whitelist-fake-addr', wt.name), w );
         }
       } else if (wt.name == name) {
-        w = this.cs.createNode( 'WhitelistedToken', { 'status': 'fake', 'platform': 'cmc', 'fake': wt.symbol });
-        this.cs.reportMessage( this.id, addr, -50, 'Token attempting to impersonate ' + wt.name + ' but symbol is incorrect', w );
+        w = this.cs.createNode( 'WhitelistedToken', { 'status': 'fake', 'platform': 'cmc', 'fake': wt.symbol, symbol, name });
+        this.cs.reportMessage( this.id, addr, -50, this.cs.banana.i18n('chainspider-whitelist-fake-symbol', wt.name), w );
       }
       
       if (w) {
@@ -49,20 +50,20 @@ export class WhitelistChecker extends Inspector {
     }
     
     if (!match) {
-      let w = this.cs.createNode( 'WhitelistedToken', { 'status': 'not-found', 'platform': 'cmc' });
-      this.cs.reportMessage( this.id, addr, -5, 'Token '+name+' was not found in CMC whitelist.', w );
+      let w = this.cs.createNode( 'WhitelistedToken', { 'status': 'not-found', 'platform': 'cmc', symbol, name });
+      this.cs.reportMessage( this.id, addr, -5, this.cs.banana.i18n('chainspider-whitelist-not-found', name, 'cmc'), w );
       this.cs.createRelation( r.dst_node, 'whitelist-lookup', w );
     }
     
   }
 
-  static panelWhitelist(node) {
+  panelWhitelist(node) {
     if (node.val.status == 'found') {
-      return `<h2>This token was found in ${node.val.platform} whitelist</h2><img src=${node.val.logoURI}>`;
+      return `<h2>${this.cs.banana.i18n('chainspider-whitelist-found', node.val.name, 'cmc')}</h2><img src=${node.val.logoURI}>`;
     } else if (node.val.status == 'not-found') {
-      return `<h2>This token was not found in ${node.val.platform} whitelist</h2>`;
+      return `<h2>${this.cs.banana.i18n('chainspider-whitelist-not-found', node.val.name, 'cmc')}</h2>`;
     } else if (node.val.status == 'fake') {
-      return `<h2>${node.val.status} is a FAKE of ${node.val.fake}</h2>`
+      return `<h2>${this.cs.banana.i18n('chainspider-whitelist-fake', node.val.name, node.val.fake)}</h2>`
     }
   }
   
