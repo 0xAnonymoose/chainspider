@@ -30,7 +30,7 @@
     </main>
     
     <script type="module">
-      const _version = '20220720';
+      const _version = '20220720b';
       
       import Banana from 'banana-i18n';
       import lang_en from '../i18n/en.json';      
@@ -157,8 +157,7 @@
 	      if (msg.score > 0) { color = 'green'; }
 	    
 	      s = '<p style="color: '+color+'"> '+msg.msg;
-	      //o += s;
-	      //console.log(nodes[n._id]);
+
 	      if (nodes[n._id] !== undefined) { nodes[n._id].messages.push(s); } else { o += s; }
 	    
 	      score += msg.score;
@@ -168,8 +167,6 @@
 	    for (let idx of Object.keys(nodes)) {
 	      let n = nodes[idx];
 	      s += '<details open><summary>'+n.summary+'</summary>'+n.messages.join('')+'</details>';
-	      
-	      console.log(s);
 	    }
 	    
 	    let scolor = 'purple';

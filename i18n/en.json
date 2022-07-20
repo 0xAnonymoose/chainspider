@@ -30,5 +30,6 @@
     "chainspider-whitelist-fake-addr": "Token attempting to fake $1, but contract address is incorrect.",
     "chainspider-whitelist-fake-symbol": "Token attempting to fake $1, but symbol is incorrect.",
     
-    "chainspider-pinksale-found": "Token $1 had a PinkSale ICO."
+    "chainspider-pinksale-found": "Token $1 had a PinkSale ICO.",
+    "chainspider-pinksale-details": "ICO Details at PinkSale"
 }

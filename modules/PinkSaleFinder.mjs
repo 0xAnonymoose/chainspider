@@ -11,7 +11,7 @@ export class PinkSaleFinder extends Inspector {
     super(cs, 'PinkSaleFinder');
       
     this.subscribe('Contract', 'is-token');
-    this.subscribe('InitialOffering', '#Details at PinkSale');
+    this.subscribe('InitialOffering', '#'+this.cs.banana.i18n('chainspider-pinksale-details'));
     
     this.panel('InitialOffering', this.panelInitialOffering.bind(this) );
   }
