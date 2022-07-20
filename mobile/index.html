@@ -129,7 +129,21 @@
 	      }
 	      if (node.type == "MalwareReport") {
 	        nodes[node._id] = { "summary": banana.i18n("chainspider-heading-malware"), "messages": [this.panels["MalwareReport"](node)] };	      
-	      }	      
+	      }
+	      if (node.type == "InitialOffering") {
+	        nodes[node._id] = { "summary": banana.i18n("chainspider-heading-ico"), "messages": [this.panels["InitialOffering"](node)] };	      
+	      }
+	      
+	      if (nodes.hasOwnProperty(node._id)) {
+	         let actions = window.cs.subscriptions.filter( (x)=>{ return x.type == node.type } );
+	         if (actions.length > 0) {
+	           for (let action of actions) {
+	             if (action.relation.substring(0,1) != '#') { continue; }
+	             if (action.relation == '#Expand Top Holders') { continue; } // TEMP
+	             nodes[node._id].messages.push(`<br><input type=button value="${action.relation.substring(1)}" onClick=" window.executeAction(${node._id}, '${action.type}', '${action.relation}'); ">`);
+	           }
+	        }
+	      }
 	    }
 	    
 	    for (let msg of this.messages) {
@@ -153,7 +167,8 @@
 	    s='';
 	    for (let idx of Object.keys(nodes)) {
 	      let n = nodes[idx];
-	      s += '<details open><summary>'+n.summary+'</summary>'+n.messages.join('')+'</details>'
+	      s += '<details open><summary>'+n.summary+'</summary>'+n.messages.join('')+'</details>';
+	      
 	      console.log(s);
 	    }
 	    
@@ -168,7 +183,24 @@
 	  }
   
       }
-      
+
+	window.executeAction = function(id, type, action) {
+	
+	  let target_node;
+	  for (let node of window.cs.nodes) {
+	    if (node._id == id) { target_node = node; break; }
+	  }
+	  if (!target_node) { return; }
+	  
+	  for (let sub of window.cs.subscriptions) {
+	    if (sub.type == type && sub.relation == action) {
+	      sub.inspector.onRelation( new Relation( target_node, action, true ) );
+	      break;
+	    }
+	  }	  
+	
+	}
+	      
       function onStartClick(e) {
 	  let addr = document.getElementById('addr').value;
 	  addr = addr.toLowerCase();
@@ -186,7 +218,7 @@
           document.getElementById('addr').value = addr;
           document.onStartClick();
         }
-        
+
     </script>
   </body>
 </html>

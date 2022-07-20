@@ -9,6 +9,7 @@ import { LPChecker } from './modules/LPChecker.mjs';
 import { LP1inchFinder } from './modules/LP1inchFinder.mjs';
 import { MalwareChecker } from './modules/MalwareChecker.mjs';
 import { BscScanTools } from './modules/BscScanTools.mjs';
+import { PinkSaleFinder } from './modules/PinkSaleFinder.mjs';
 
 export function registerModules(cs) {
   new ContractFinder(cs);
@@ -22,6 +23,8 @@ export function registerModules(cs) {
   new LPFactoryFinder(cs);
 
   new MalwareChecker(cs);
+  
+  new PinkSaleFinder(cs);
 
   // actions
   new TopHoldersFinder(cs);
@@ -35,6 +38,7 @@ export function getAllStyles() {
    ...TokenFinder.getStyles(),
    ...TopHoldersFinder.getStyles(),
    ...TopHoldersChecker.getStyles(),
-   ...MalwareChecker.getStyles()
+   ...MalwareChecker.getStyles(),
+   ...PinkSaleFinder.getStyles()
   ];
 }

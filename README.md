@@ -100,7 +100,7 @@ Three frontends are implemented in this repository.
 [ ] Whitelist: panel add buttons for other scanners when token passes
 [ ] Deployer discovery
 [ ] Discover Locks and Locked tokens
-[ ] Discover ICO 
+[x] Discover ICO 
 ```
 
 ## Open Beta
