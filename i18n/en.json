@@ -1,0 +1,21 @@
+{
+    "@metadata": {
+        "authors": [
+            "Anonymoose"
+        ]
+    },
+    "chainspider-mobile-title": "ChainSpider Mobile",
+    "chainspider-mobile-version": "$1",
+    "chainspider-mobile-placeholder": "BSC Contract Address",
+    "chainspider-mobile-scan": "Scan",
+    "chainspider-mobile-welcome": "Enter a contract address above and tap Scan to start.",
+       
+    "chainspider-score-scam": "Score $1 - DEFINITE SCAM!",
+    "chainspider-score-good": "Score $1 - GOOD!",
+    "chainspider-score-unknown": "Score $1 - WARNING (RESEARCH MORE)",
+    
+    "chainspider-heading-token": "Token $1 ($2)",
+    "chainspider-heading-amm": "$1",
+    "chainspider-heading-whitelist": "CoinMarketCap",
+    "chainspider-heading-malware": "Malware Scan"
+}

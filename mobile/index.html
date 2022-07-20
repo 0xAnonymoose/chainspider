@@ -6,35 +6,62 @@
     
     <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
     <title>ChainSpider Mobile</title>
+    
+    <style>
+      #logo {
+        background-image: url('/icons/spiderweb.png?width=32');
+        width: 32px;
+        height: 32px;
+        float: left;
+        padding: 2px;
+        margin: 4px;
+      }
+      
+      #form {
+        padding: 8px;
+      }
+
+    </style>
   </head>
   <body>
 
     <!-- Main -->
-    <main class="container">
-      <article class="grid">
-        <div>
+    <main class="container" id="main">
+    </main>
     
+    <script type="module">
+      import Banana from 'banana-i18n';
+      import lang_en from '../i18n/en.json';      
+      
+      const banana = window.banana = new Banana('en');
+      banana.load(lang_en, 'en');
+      
+      document.getElementById('main').innerHTML = 
+      `
+      <article class="grid">
+      <div>    
           <section id="form">
+   
             <hgroup>
-              <h1><img src="../icons/spiderweb.png?height=32">&nbsp;ChainSpider Mobile&nbsp;<sup>20220719</sup></h1>
+              <div id="logo"></div>
+              <h1>${banana.i18n('chainspider-mobile-title')}<sup>${banana.i18n('chainspider-mobile-version', '20220720')}</sup></h1>
             </hgroup>
           
-
-              <input type="search" id="addr" name="addr" placeholder="BSC Contract Address">
-              <button class="outline" onClick='document.onStartClick()'>Scan</button>
+            <input type="search" id="addr" name="addr" placeholder="${banana.i18n('chainspider-mobile-placeholder')}">
+            <button class="outline" onClick='document.onStartClick()'>${banana.i18n('chainspider-mobile-scan')}</button>
  
           </section>
 
-          <section id="progress">
+          <section>
+            <div id="progress">${banana.i18n('chainspider-mobile-welcome')}</div>
+            <div id="active"></div>
+            <div id="accordions"></div>
           </section>
-
-      <section id="accordions">
-        Enter a contract address above and tap Scan to start.
-      </section>
-
+      
+      </div>
       </article>
-    
-    </main>
+      `;
+    </script>
     
     <script type="module">
       import { ChainSpider, Relation } from '../chainspider.mjs';
@@ -46,6 +73,7 @@
             super();
             
             this.active = {};
+            this.isRunning = false;
         }
         
         onSubscriptionStart(sub, relation, id) {
@@ -61,17 +89,21 @@
         
         updateProgress() {
             let running = Object.keys(this.active);
-            let s = '';
             
-            if (running.length > 0) {
-              s = '<progress id="progress-2"></progress>';
+            if (running.length > 0 && !this.isRunning) {
+              document.getElementById('progress').innerHTML = '<progress id="progress-2"></progress>';
+              this.isRunning = true;
             }
-            
+            if (running.length == 0 && this.isRunning) {
+              document.getElementById('progress').innerHTML = '';
+              this.isRunning = false;
+            }
+
+            let s = '';            
             for (let id of running) {
               s += '<button class="secondary outline">'+this.active[id].sub.toString()+' '+this.active[id].relation.src_node.toString()+'</button>';
-            }
-            
-            document.getElementById('progress').innerHTML = s;
+            }            
+            document.getElementById('active').innerHTML = s;
         }
         
         onMessage(msg) {
@@ -85,16 +117,16 @@
 	    
 	    for (let node of this.nodes) {
 	      if (node.type == "TokenBEP20") {
-	        nodes[node._id] = { "summary": `Token ${node.val.name} (${node.val.symbol})`, "messages": [this.panels["TokenBEP20"](node)] };
+	        nodes[node._id] = { "summary": banana.i18n("chainspider-heading-token", node.val.name, node.val.symbol), "messages": [this.panels["TokenBEP20"](node)] };
 	      }
 	      if (node.type == "TokenAMM") {
-	        nodes[node._id] = { "summary": `${node.val.name}`, "messages": [this.panels["TokenAMM"](node)] };
+	        nodes[node._id] = { "summary": banana.i18n("chainspider-heading-amm", node.val.name), "messages": [this.panels["TokenAMM"](node)] };
 	      }
 	      if (node.type == "WhitelistedToken") {
-	        nodes[node._id] = { "summary": `CoinMarketCap`, "messages": [this.panels["WhitelistedToken"](node)] };	      
+	        nodes[node._id] = { "summary": banana.i18n("chainspider-heading-whitelist"), "messages": [this.panels["WhitelistedToken"](node)] };	      
 	      }
 	      if (node.type == "MalwareReport") {
-	        nodes[node._id] = { "summary": `Malware Scan`, "messages": [this.panels["MalwareReport"](node)] };	      
+	        nodes[node._id] = { "summary": banana.i18n("chainspider-heading-malware"), "messages": [this.panels["MalwareReport"](node)] };	      
 	      }	      
 	    }
 	    
@@ -124,12 +156,13 @@
 	    }
 	    
 	    let scolor = 'purple';
-	    let snote = 'WARNING';
-	    if (score <= -100) { snote='SCAM'; scolor='red'; }
-	    if (score >= 100) { snote='PASS'; scolor='green'; }
-	    let n = '<h1 style="color: '+scolor+'; text-align:center">Score '+score+" "+snote+'</h1>'
+	    let snote = "chainspider-score-unknown";
+	    if (score <= -100)     { snote='chainspider-score-scam'; scolor='red'; }
+	    else if (score >= 100) { snote='chainspider-score-good'; scolor='green'; }
 	    
-	    document.getElementById('accordions').innerHTML = o+n+s;
+	    let score_html = `<h1 style="color: ${scolor}; text-align:center">${banana.i18n(snote, score)}</h1>`;
+	    
+	    document.getElementById('accordions').innerHTML = score_html+o+s;
 	  }
   
       }
