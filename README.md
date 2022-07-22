@@ -97,20 +97,26 @@ Three frontends are implemented in this repository.
 [x] Panel: highlight active node
 [x] Whitelist: Refactor to always output a report, add icons
 [x] Panel for BA and Contract with bscscan links
-[ ] Whitelist: panel add buttons for other scanners when token passes
-[ ] Deployer discovery
-[ ] Discover Locks and Locked tokens
 [x] Discover ICO 
+[ ] Malware: add buttons for other scanners
+[ ] TokenAMM panel: trade now buttons for ape, bi, baby and cakeswaps
+[ ] Deployer discovery
+[ ] Discover token and LP Locks
+[ ] Mobile home screen manifest
+[ ] Whitelist: if found, add button for CMC details
 ```
 
 ## Open Beta
 
 ```
-[ ] TokenAMM panel: trade now buttons for ape, bi, baby and cakeswaps
+[ ] Malware panel: link to a page with more info when matched
+[ ] ICO Discover add DxSale
+[ ] Mobile Dark mode CSS fixes
 [ ] Contract blockchain-malware checks: source, filenames
 [ ] LPFactoryFinder: Multicall
 [ ] TokenFinder: Multicall
 [ ] Deployer sanity checks
+[ ] Deployer blacklist check 
 [ ] Deployer panel: expand all contracts
 [ ] Lock checks
 [ ] ICO checks
@@ -125,9 +131,8 @@ Three frontends are implemented in this repository.
 [ ] UX to delete nodes
 [ ] User-provided names for BlockchainAddress
 [ ] Discover bscscan names for BlockchainAddress
-[ ] CoinMarketCap API integration
+[ ] Whitelist: CoinMarketCap API integration
 [ ] Contract blacklist check
-[ ] Deployer blacklist check 
 ```
 
 ## Launch
