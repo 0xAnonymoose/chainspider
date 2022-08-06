@@ -14,7 +14,7 @@ if (secret === undefined) {
 }
 
 const keyboard = Markup.inlineKeyboard([
-  Markup.button.url('Desktop App', 'http://chainspider.duckdns.org'),
+  Markup.button.url('Desktop App', 'http://chainspider.net'),
   Markup.button.callback('Request Key', 'getkey'),
   Markup.button.callback('Report Scam', 'reportscam')
 ])
